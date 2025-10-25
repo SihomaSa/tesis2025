@@ -1,0 +1,301 @@
+fecha,usuario,comentario,plataforma,sentimiento,categoria,emocion
+2025-01-01,user_001,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Político,Indignación
+2025-01-02,user_002,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Servicio,Orgullo
+2025-01-03,user_003,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Cultura,Orgullo
+2025-01-04,user_004,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Servicio,Indignación
+2025-01-05,user_005,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Académico,Tristeza
+2025-01-06,user_006,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Servicio,Tristeza
+2025-01-07,user_007,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Político,Frustración
+2025-01-08,user_008,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Bienestar,Frustración
+2025-01-09,user_009,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Bienestar,Indignación
+2025-01-10,user_010,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Servicio,Orgullo
+2025-01-11,user_011,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Servicio,Orgullo
+2025-01-12,user_012,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Académico,Indignación
+2025-01-13,user_013,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Bienestar,Indignación
+2025-01-14,user_014,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Infraestructura,Esperanza
+2025-01-15,user_015,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Bienestar,Tristeza
+2025-01-16,user_016,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Bienestar,Indignación
+2025-01-17,user_017,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Cultura,Alegría
+2025-01-18,user_018,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Bienestar,Frustración
+2025-01-19,user_019,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Cultura,Indignación
+2025-01-20,user_020,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Político,Orgullo
+2025-01-21,user_021,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Cultura,Tristeza
+2025-01-22,user_022,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Bienestar,Frustración
+2025-01-23,user_023,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Político,Indignación
+2025-01-24,user_024,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Infraestructura,Indignación
+2025-01-25,user_025,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Académico,Orgullo
+2025-01-26,user_026,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Bienestar,Orgullo
+2025-01-27,user_027,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Bienestar,Indignación
+2025-01-28,user_028,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Bienestar,Alegría
+2025-01-29,user_029,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Servicio,Alegría
+2025-01-30,user_030,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Bienestar,Esperanza
+2025-01-31,user_031,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Académico,Frustración
+2025-02-01,user_032,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Político,Tristeza
+2025-02-02,user_033,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Servicio,Frustración
+2025-02-03,user_034,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Servicio,Indignación
+2025-02-04,user_035,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Político,Tristeza
+2025-02-05,user_036,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Servicio,Orgullo
+2025-02-06,user_037,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Bienestar,Tristeza
+2025-02-07,user_038,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Político,Alegría
+2025-02-08,user_039,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Servicio,Tristeza
+2025-02-09,user_040,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Bienestar,Orgullo
+2025-02-10,user_041,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Infraestructura,Alegría
+2025-02-11,user_042,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Bienestar,Alegría
+2025-02-12,user_043,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Académico,Tristeza
+2025-02-13,user_044,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Cultura,Alegría
+2025-02-14,user_045,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Académico,Alegría
+2025-02-15,user_046,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Infraestructura,Frustración
+2025-02-16,user_047,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Político,Tristeza
+2025-02-17,user_048,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Servicio,Orgullo
+2025-02-18,user_049,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Académico,Indignación
+2025-02-19,user_050,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Académico,Orgullo
+2025-02-20,user_051,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Académico,Alegría
+2025-02-21,user_052,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Político,Tristeza
+2025-02-22,user_053,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Político,Tristeza
+2025-02-23,user_054,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Infraestructura,Tristeza
+2025-02-24,user_055,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Académico,Frustración
+2025-02-25,user_056,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Infraestructura,Tristeza
+2025-02-26,user_057,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Académico,Tristeza
+2025-02-27,user_058,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Servicio,Orgullo
+2025-02-28,user_059,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Político,Tristeza
+2025-03-01,user_060,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Servicio,Frustración
+2025-03-02,user_061,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Cultura,Esperanza
+2025-03-03,user_062,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Académico,Frustración
+2025-03-04,user_063,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Académico,Indignación
+2025-03-05,user_064,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Político,Frustración
+2025-03-06,user_065,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Cultura,Frustración
+2025-03-07,user_066,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Servicio,Tristeza
+2025-03-08,user_067,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Académico,Esperanza
+2025-03-09,user_068,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Bienestar,Frustración
+2025-03-10,user_069,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Cultura,Orgullo
+2025-03-11,user_070,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Académico,Indignación
+2025-03-12,user_071,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Político,Tristeza
+2025-03-13,user_072,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Cultura,Esperanza
+2025-03-14,user_073,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Académico,Orgullo
+2025-03-15,user_074,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Servicio,Alegría
+2025-03-16,user_075,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Académico,Tristeza
+2025-03-17,user_076,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Servicio,Alegría
+2025-03-18,user_077,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Infraestructura,Frustración
+2025-03-19,user_078,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Servicio,Esperanza
+2025-03-20,user_079,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Académico,Tristeza
+2025-03-21,user_080,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Académico,Indignación
+2025-03-22,user_081,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Infraestructura,Alegría
+2025-03-23,user_082,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Bienestar,Orgullo
+2025-03-24,user_083,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Servicio,Tristeza
+2025-03-25,user_084,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Servicio,Tristeza
+2025-03-26,user_085,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Académico,Alegría
+2025-03-27,user_086,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Servicio,Alegría
+2025-03-28,user_087,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Académico,Alegría
+2025-03-29,user_088,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Político,Esperanza
+2025-03-30,user_089,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Bienestar,Alegría
+2025-03-31,user_090,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Servicio,Esperanza
+2025-04-01,user_091,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Cultura,Esperanza
+2025-04-02,user_092,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Político,Indignación
+2025-04-03,user_093,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Cultura,Indignación
+2025-04-04,user_094,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Servicio,Indignación
+2025-04-05,user_095,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Bienestar,Tristeza
+2025-04-06,user_096,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Académico,Indignación
+2025-04-07,user_097,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Bienestar,Frustración
+2025-04-08,user_098,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Servicio,Tristeza
+2025-04-09,user_099,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Servicio,Esperanza
+2025-04-10,user_100,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Infraestructura,Tristeza
+2025-04-11,user_101,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Bienestar,Alegría
+2025-04-12,user_102,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Bienestar,Indignación
+2025-04-13,user_103,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Político,Frustración
+2025-04-14,user_104,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Bienestar,Tristeza
+2025-04-15,user_105,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Bienestar,Esperanza
+2025-04-16,user_106,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Bienestar,Tristeza
+2025-04-17,user_107,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Cultura,Frustración
+2025-04-18,user_108,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Infraestructura,Frustración
+2025-04-19,user_109,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Servicio,Indignación
+2025-04-20,user_110,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Académico,Alegría
+2025-04-21,user_111,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Cultura,Esperanza
+2025-04-22,user_112,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Cultura,Indignación
+2025-04-23,user_113,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Académico,Tristeza
+2025-04-24,user_114,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Político,Frustración
+2025-04-25,user_115,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Servicio,Frustración
+2025-04-26,user_116,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Político,Esperanza
+2025-04-27,user_117,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Servicio,Alegría
+2025-04-28,user_118,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Bienestar,Tristeza
+2025-04-29,user_119,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Infraestructura,Frustración
+2025-04-30,user_120,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Cultura,Tristeza
+2025-05-01,user_121,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Servicio,Orgullo
+2025-05-02,user_122,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Servicio,Esperanza
+2025-05-03,user_123,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Bienestar,Alegría
+2025-05-04,user_124,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Infraestructura,Frustración
+2025-05-05,user_125,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Cultura,Orgullo
+2025-05-06,user_126,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Infraestructura,Orgullo
+2025-05-07,user_127,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Bienestar,Esperanza
+2025-05-08,user_128,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Servicio,Orgullo
+2025-05-09,user_129,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Servicio,Frustración
+2025-05-10,user_130,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Bienestar,Alegría
+2025-05-11,user_131,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Político,Orgullo
+2025-05-12,user_132,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Político,Indignación
+2025-05-13,user_133,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Servicio,Orgullo
+2025-05-14,user_134,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Académico,Indignación
+2025-05-15,user_135,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Académico,Esperanza
+2025-05-16,user_136,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Cultura,Esperanza
+2025-05-17,user_137,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Académico,Esperanza
+2025-05-18,user_138,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Infraestructura,Frustración
+2025-05-19,user_139,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Bienestar,Esperanza
+2025-05-20,user_140,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Infraestructura,Esperanza
+2025-05-21,user_141,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Servicio,Frustración
+2025-05-22,user_142,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Bienestar,Indignación
+2025-05-23,user_143,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Cultura,Tristeza
+2025-05-24,user_144,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Bienestar,Esperanza
+2025-05-25,user_145,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Cultura,Indignación
+2025-05-26,user_146,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Infraestructura,Esperanza
+2025-05-27,user_147,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Político,Indignación
+2025-05-28,user_148,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Cultura,Esperanza
+2025-05-29,user_149,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Cultura,Esperanza
+2025-05-30,user_150,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Académico,Frustración
+2025-05-31,user_151,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Servicio,Tristeza
+2025-06-01,user_152,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Político,Frustración
+2025-06-02,user_153,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Servicio,Orgullo
+2025-06-03,user_154,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Infraestructura,Indignación
+2025-06-04,user_155,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Infraestructura,Alegría
+2025-06-05,user_156,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Cultura,Frustración
+2025-06-06,user_157,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Académico,Frustración
+2025-06-07,user_158,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Político,Frustración
+2025-06-08,user_159,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Cultura,Alegría
+2025-06-09,user_160,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Infraestructura,Esperanza
+2025-06-10,user_161,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Político,Frustración
+2025-06-11,user_162,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Cultura,Indignación
+2025-06-12,user_163,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Académico,Esperanza
+2025-06-13,user_164,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Político,Esperanza
+2025-06-14,user_165,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Académico,Alegría
+2025-06-15,user_166,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Político,Esperanza
+2025-06-16,user_167,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Bienestar,Alegría
+2025-06-17,user_168,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Político,Alegría
+2025-06-18,user_169,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Académico,Tristeza
+2025-06-19,user_170,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Infraestructura,Esperanza
+2025-06-20,user_171,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Servicio,Frustración
+2025-06-21,user_172,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Académico,Alegría
+2025-06-22,user_173,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Académico,Frustración
+2025-06-23,user_174,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Infraestructura,Alegría
+2025-06-24,user_175,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Cultura,Indignación
+2025-06-25,user_176,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Político,Indignación
+2025-06-26,user_177,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Bienestar,Tristeza
+2025-06-27,user_178,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Político,Indignación
+2025-06-28,user_179,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Político,Indignación
+2025-06-29,user_180,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Cultura,Alegría
+2025-06-30,user_181,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Académico,Tristeza
+2025-07-01,user_182,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Bienestar,Alegría
+2025-07-02,user_183,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Político,Esperanza
+2025-07-03,user_184,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Cultura,Orgullo
+2025-07-04,user_185,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Académico,Esperanza
+2025-07-05,user_186,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Servicio,Tristeza
+2025-07-06,user_187,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Infraestructura,Alegría
+2025-07-07,user_188,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Infraestructura,Orgullo
+2025-07-08,user_189,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Académico,Alegría
+2025-07-09,user_190,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Político,Alegría
+2025-07-10,user_191,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Infraestructura,Esperanza
+2025-07-11,user_192,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Bienestar,Tristeza
+2025-07-12,user_193,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Político,Frustración
+2025-07-13,user_194,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Infraestructura,Esperanza
+2025-07-14,user_195,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Infraestructura,Frustración
+2025-07-15,user_196,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Académico,Orgullo
+2025-07-16,user_197,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Político,Tristeza
+2025-07-17,user_198,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Servicio,Esperanza
+2025-07-18,user_199,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Académico,Alegría
+2025-07-19,user_200,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Infraestructura,Alegría
+2025-07-20,user_201,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Académico,Indignación
+2025-07-21,user_202,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Infraestructura,Frustración
+2025-07-22,user_203,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Infraestructura,Esperanza
+2025-07-23,user_204,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Servicio,Alegría
+2025-07-24,user_205,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Académico,Indignación
+2025-07-25,user_206,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Infraestructura,Alegría
+2025-07-26,user_207,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Bienestar,Tristeza
+2025-07-27,user_208,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Servicio,Tristeza
+2025-07-28,user_209,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Infraestructura,Alegría
+2025-07-29,user_210,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Académico,Orgullo
+2025-07-30,user_211,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Cultura,Indignación
+2025-07-31,user_212,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Servicio,Indignación
+2025-08-01,user_213,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Infraestructura,Orgullo
+2025-08-02,user_214,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Bienestar,Alegría
+2025-08-03,user_215,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Infraestructura,Esperanza
+2025-08-04,user_216,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Infraestructura,Esperanza
+2025-08-05,user_217,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Infraestructura,Frustración
+2025-08-06,user_218,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Académico,Alegría
+2025-08-07,user_219,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Académico,Indignación
+2025-08-08,user_220,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Académico,Orgullo
+2025-08-09,user_221,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Servicio,Esperanza
+2025-08-10,user_222,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Político,Orgullo
+2025-08-11,user_223,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Infraestructura,Esperanza
+2025-08-12,user_224,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Bienestar,Orgullo
+2025-08-13,user_225,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Servicio,Indignación
+2025-08-14,user_226,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Infraestructura,Esperanza
+2025-08-15,user_227,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Político,Indignación
+2025-08-16,user_228,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Político,Tristeza
+2025-08-17,user_229,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Bienestar,Tristeza
+2025-08-18,user_230,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Infraestructura,Esperanza
+2025-08-19,user_231,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Infraestructura,Frustración
+2025-08-20,user_232,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Académico,Esperanza
+2025-08-21,user_233,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Académico,Alegría
+2025-08-22,user_234,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Infraestructura,Alegría
+2025-08-23,user_235,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Bienestar,Orgullo
+2025-08-24,user_236,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Cultura,Alegría
+2025-08-25,user_237,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Infraestructura,Indignación
+2025-08-26,user_238,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Servicio,Orgullo
+2025-08-27,user_239,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Cultura,Esperanza
+2025-08-28,user_240,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Servicio,Orgullo
+2025-08-29,user_241,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Servicio,Tristeza
+2025-08-30,user_242,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Servicio,Frustración
+2025-08-31,user_243,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Político,Alegría
+2025-09-01,user_244,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Bienestar,Frustración
+2025-09-02,user_245,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Bienestar,Frustración
+2025-09-03,user_246,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Cultura,Indignación
+2025-09-04,user_247,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Servicio,Indignación
+2025-09-05,user_248,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Cultura,Orgullo
+2025-09-06,user_249,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Infraestructura,Orgullo
+2025-09-07,user_250,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Cultura,Esperanza
+2025-09-08,user_251,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Servicio,Alegría
+2025-09-09,user_252,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Servicio,Orgullo
+2025-09-10,user_253,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Bienestar,Indignación
+2025-09-11,user_254,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Académico,Esperanza
+2025-09-12,user_255,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Infraestructura,Indignación
+2025-09-13,user_256,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Servicio,Tristeza
+2025-09-14,user_257,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Servicio,Indignación
+2025-09-15,user_258,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Académico,Orgullo
+2025-09-16,user_259,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Político,Indignación
+2025-09-17,user_260,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Infraestructura,Indignación
+2025-09-18,user_261,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Servicio,Frustración
+2025-09-19,user_262,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Cultura,Tristeza
+2025-09-20,user_263,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Académico,Alegría
+2025-09-21,user_264,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Servicio,Orgullo
+2025-09-22,user_265,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Infraestructura,Alegría
+2025-09-23,user_266,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Infraestructura,Orgullo
+2025-09-24,user_267,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Bienestar,Tristeza
+2025-09-25,user_268,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Infraestructura,Orgullo
+2025-09-26,user_269,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Político,Indignación
+2025-09-27,user_270,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Político,Indignación
+2025-09-28,user_271,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Cultura,Tristeza
+2025-09-29,user_272,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Académico,Esperanza
+2025-09-30,user_273,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Cultura,Alegría
+2025-10-01,user_274,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Cultura,Frustración
+2025-10-02,user_275,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Político,Tristeza
+2025-10-03,user_276,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Académico,Alegría
+2025-10-04,user_277,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Político,Orgullo
+2025-10-05,user_278,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Político,Frustración
+2025-10-06,user_279,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Cultura,Frustración
+2025-10-07,user_280,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Infraestructura,Indignación
+2025-10-08,user_281,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Bienestar,Tristeza
+2025-10-09,user_282,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Bienestar,Esperanza
+2025-10-10,user_283,Otra vez el portal colapsa cuando más lo necesitamos 😤,Instagram,Negativo,Cultura,Frustración
+2025-10-11,user_284,"Infraestructura en mal estado, aulas sin luz ni ventilación",Instagram,Negativo,Infraestructura,Frustración
+2025-10-12,user_285,Felicitaciones a los docentes por su compromiso ❤️,Instagram,Positivo,Infraestructura,Esperanza
+2025-10-13,user_286,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Bienestar,Orgullo
+2025-10-14,user_287,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Académico,Frustración
+2025-10-15,user_288,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Bienestar,Esperanza
+2025-10-16,user_289,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Bienestar,Alegría
+2025-10-17,user_290,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Bienestar,Frustración
+2025-10-18,user_291,"Me encantó el evento cultural, San Marcos brilla ✨",Instagram,Positivo,Infraestructura,Orgullo
+2025-10-19,user_292,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Cultura,Indignación
+2025-10-20,user_293,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Servicio,Alegría
+2025-10-21,user_294,Demasiada burocracia para un trámite simple 😡,Instagram,Negativo,Cultura,Frustración
+2025-10-22,user_295,"La nueva biblioteca está increíble, buen trabajo 📚",Instagram,Positivo,Cultura,Alegría
+2025-10-23,user_296,"Excelente atención en bienestar, gracias por el apoyo 👏",Instagram,Positivo,Académico,Esperanza
+2025-10-24,user_297,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Servicio,Tristeza
+2025-10-25,user_298,"Muy buena la charla sobre inteligencia artificial, sigan así 💡",Instagram,Positivo,Bienestar,Alegría
+2025-10-26,user_299,"Mucho politiqueo, deberían enfocarse en los alumnos",Instagram,Negativo,Político,Tristeza
+2025-10-27,user_300,"El rector no escucha a los estudiantes, decepcionante",Instagram,Negativo,Cultura,Frustración
