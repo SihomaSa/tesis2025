@@ -1,0 +1,30 @@
+<header class="dashboard-header">
+  <div class="header-content">
+    <div class="header-left">
+      <div class="logo-container">
+        <span class="logo-icon">🎓</span>
+      </div>
+      <div class="header-info">
+        <h1>UNMSM - Dashboard de Análisis de Sentimientos</h1>
+        <p>Predicción de Satisfacción de Usuarios en Instagram</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <p class="header-title">Investigación de Maestría</p>
+      <p class="header-date">Actualizado: {{ getCurrentDate() }}</p>
+    </div>
+  </div>
+</header>
+
+<nav class="dashboard-nav">
+  <div class="nav-content">
+    <button 
+      *ngFor="let item of navItems"
+      [class.active]="activeView === item.id"
+      (click)="onNavigate(item.id)"
+      class="nav-button">
+      <span class="nav-icon">{{ item.icon }}</span>
+      {{ item.label }}
+    </button>
+  </div>
+</nav>

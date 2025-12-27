@@ -1,0 +1,58 @@
+<!-- Indicadores KPIs Section -->
+<section class="indicadores" id="indicadores">
+  <div class="indicadores-container">
+    <div class="section-title">
+      <h2>Indicadores Clave de Desempeño (KPIs)</h2>
+      <p>Métricas en tiempo real del sistema de predicción agrícola</p>
+    </div>
+
+    <div class="kpi-header">
+      <div class="kpi-date">
+        <span class="date-label">📅 Fecha de Análisis</span>
+        <span class="date-value">{{ currentDate }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card" *ngFor="let kpi of kpis" [class]="kpi.type">
+        <div class="kpi-icon">{{ kpi.icon }}</div>
+        <div class="kpi-label">{{ kpi.label }}</div>
+        <div class="kpi-value">{{ kpi.value }}</div>
+        <div class="kpi-sublabel">{{ kpi.sublabel }}</div>
+      </div>
+    </div>
+
+    <div class="prediction-panel">
+      <h3>🎯 Panel de Predicción - Cultivo de Arroz</h3>
+      
+      <div class="prediction-grid">
+        <div class="prediction-result" *ngFor="let prediction of predictions" [class]="prediction.type">
+          <div class="result-header">
+            <span class="result-icon">{{ prediction.icon }}</span>
+            <span class="result-title">{{ prediction.title }}</span>
+          </div>
+          <div class="result-value" [class]="prediction.valueClass">{{ prediction.value }}</div>
+          <div class="result-label">{{ prediction.label }}</div>
+        </div>
+      </div>
+
+      <div class="recommendation-box">
+        <div class="recommendation-header">
+          <span class="rec-icon">💡</span>
+          <span class="rec-title">Recomendación del Sistema</span>
+        </div>
+        <div class="recommendation-text">
+          <span class="badge-excellent">EXCELENTE</span>
+          Precio muy favorable para venta. Se recomienda aprovechar las condiciones actuales del mercado.
+        </div>
+      </div>
+    </div>
+
+    <div class="metrics-summary">
+      <div class="metric-item" *ngFor="let metric of metrics">
+        <span class="metric-label">{{ metric.icon }} {{ metric.label }}</span>
+        <span class="metric-value">{{ metric.value }}</span>
+      </div>
+    </div>
+  </div>
+</section>

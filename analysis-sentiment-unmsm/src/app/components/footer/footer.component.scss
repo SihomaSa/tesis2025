@@ -1,0 +1,33 @@
+// Variables
+$bg-white: #ffffff;
+$border-color: #e5e7eb;
+$text-secondary: #6b7280;
+
+// Footer
+.dashboard-footer {
+  background: $bg-white;
+  border-top: 1px solid $border-color;
+  margin-top: 3rem;
+  
+  .footer-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: $text-secondary;
+    
+    p {
+      margin: 0;
+    }
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+}

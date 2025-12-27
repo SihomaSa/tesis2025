@@ -1,0 +1,153 @@
+<div class="analysis-container">
+  <div class="chart-card">
+    <h3 class="chart-title">Análisis de Sentimiento Individual</h3>
+    
+    <!-- Mensaje de error si existe -->
+    <div *ngIf="error" class="error-banner">
+      <span class="error-icon">⚠️</span>
+      <span class="error-message">{{ error }}</span>
+      <button (click)="error = null" class="close-error">×</button>
+    </div>
+    
+    <div class="analysis-form">
+      <label class="form-label">Ingrese comentario a analizar:</label>
+      <textarea 
+        [(ngModel)]="selectedComment"
+        class="form-textarea"
+        rows="4"
+        [disabled]="isLoading"
+        placeholder="Ejemplo: La universidad tiene excelentes profesores y muy buena infraestructura...">
+      </textarea>
+      
+      <button 
+        (click)="analyzeSingleComment()"
+        [disabled]="!selectedComment.trim() || isLoading"
+        class="btn-primary">
+        <span *ngIf="!isLoading">🔍 Analizar Sentimiento</span>
+        <span *ngIf="isLoading" class="loading-spinner">
+          ⏳ Analizando...
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Resultado del análisis -->
+  <div *ngIf="analysisResult" class="chart-card analysis-result">
+    <h3 class="chart-title">Resultados del Análisis</h3>
+    
+    <div class="result-main">
+      <div class="result-header">
+        <span class="result-label">Sentimiento Detectado</span>
+        <div class="result-sentiment" [ngClass]="getSentimentClass(analysisResult.sentiment)">
+          <span class="sentiment-icon">{{ getSentimentIcon(analysisResult.sentiment) }}</span>
+          {{ analysisResult.sentiment }}
+        </div>
+      </div>
+      
+      <div class="confidence-bar">
+        <div class="confidence-header">
+          <span>Nivel de Confianza: {{ analysisResult.confidence_level }}</span>
+          <span class="confidence-value">{{ (analysisResult.confidence * 100) | number:'1.1-1' }}%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="analysisResult.confidence * 100"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Probabilidades -->
+    <div class="probabilities" *ngIf="analysisResult.probabilities">
+      <h4 class="probabilities-title">Distribución de Probabilidades</h4>
+      
+      <div class="probability-item">
+        <div class="probability-header">
+          <span class="probability-label positive">🟢 Positivo</span>
+          <span class="probability-value">{{ (analysisResult.probabilities.positivo * 100) | number:'1.1-1' }}%</span>
+        </div>
+        <div class="progress-bar small">
+          <div class="progress-fill positive" [style.width.%]="analysisResult.probabilities.positivo * 100"></div>
+        </div>
+      </div>
+
+      <div class="probability-item">
+        <div class="probability-header">
+          <span class="probability-label neutral">🟡 Neutral</span>
+          <span class="probability-value">{{ (analysisResult.probabilities.neutral * 100) | number:'1.1-1' }}%</span>
+        </div>
+        <div class="progress-bar small">
+          <div class="progress-fill neutral" [style.width.%]="analysisResult.probabilities.neutral * 100"></div>
+        </div>
+      </div>
+
+      <div class="probability-item">
+        <div class="probability-header">
+          <span class="probability-label negative">🔴 Negativo</span>
+          <span class="probability-value">{{ (analysisResult.probabilities.negativo * 100) | number:'1.1-1' }}%</span>
+        </div>
+        <div class="progress-bar small">
+          <div class="progress-fill negative" [style.width.%]="analysisResult.probabilities.negativo * 100"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metadatos -->
+    <div class="result-metadata">
+      <div class="metadata-item">
+        <span class="metadata-label">Fecha de Análisis:</span>
+        <p class="metadata-value">{{ analysisResult.timestamp }}</p>
+      </div>
+      <div class="metadata-item">
+        <span class="metadata-label">Longitud del Texto:</span>
+        <p class="metadata-value">{{ analysisResult.comment.length }} caracteres</p>
+      </div>
+      <div class="metadata-item">
+        <span class="metadata-label">Palabras Analizadas:</span>
+        <p class="metadata-value">{{ countWords(analysisResult.comment) }} palabras</p>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="analysis-actions">
+      <button (click)="clearAnalysis()" class="btn-secondary">
+        🔄 Nuevo Análisis
+      </button>
+      <button 
+        (click)="saveAnalysis()" 
+        class="btn-success"
+        [disabled]="!analysisResult.success">
+        💾 Guardar Resultado
+      </button>
+    </div>
+  </div>
+
+  <!-- Historial -->
+  <div *ngIf="analysisHistory.length > 0" class="chart-card">
+    <div class="history-header">
+      <h3 class="chart-title">Historial de Análisis ({{ analysisHistory.length }})</h3>
+      <button (click)="clearAllHistory()" class="btn-clear-history">
+        🗑️ Limpiar Todo
+      </button>
+    </div>
+    
+    <div class="history-list">
+      <div *ngFor="let item of analysisHistory; let i = index" class="history-item">
+        <div class="history-header-row">
+          <span class="history-number">#{{ analysisHistory.length - i }}</span>
+          <span class="history-date">{{ item.timestamp }}</span>
+          <div class="history-sentiment" [ngClass]="getSentimentClass(item.sentiment)">
+            {{ getSentimentIcon(item.sentiment) }} {{ item.sentiment }}
+          </div>
+        </div>
+        <p class="history-comment">{{ item.comment }}</p>
+        <div class="history-footer">
+          <span class="history-confidence">
+            Confianza: {{ (item.confidence * 100) | number:'1.0-0' }}%
+          </span>
+          <button (click)="deleteFromHistory(i)" class="btn-delete">
+            🗑️ Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

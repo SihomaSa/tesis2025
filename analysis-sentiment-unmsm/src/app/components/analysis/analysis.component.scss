@@ -1,0 +1,158 @@
+// Estilos adicionales para analysis.component.scss
+
+// Banner de error
+.error-banner {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideDown 0.3s ease-out;
+  
+  .error-icon {
+    font-size: 20px;
+  }
+  
+  .error-message {
+    flex: 1;
+    color: #991b1b;
+    font-weight: 500;
+  }
+  
+  .close-error {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #991b1b;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+      opacity: 0.7;
+    }
+  }
+}
+
+// Spinner de carga
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Botón deshabilitado
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.btn-success:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  
+  &:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+// Header del historial
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  .btn-clear-history {
+    padding: 8px 16px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: #dc2626;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// Estados de carga en el textarea
+.form-textarea:disabled {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+// Animación de entrada para resultados
+.analysis-result {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .error-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    
+    .close-error {
+      align-self: flex-end;
+    }
+  }
+  
+  .history-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+    
+    .btn-clear-history {
+      width: 100%;
+    }
+  }
+}

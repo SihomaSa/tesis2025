@@ -1,0 +1,143 @@
+// Variables
+$primary-color: #1e40af;
+$secondary-color: #3b82f6;
+$bg-white: #ffffff;
+$border-color: #e5e7eb;
+$text-secondary: #6b7280;
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+$transition: all 0.3s ease;
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Header
+.dashboard-header {
+  background: linear-gradient(to right, #1e3a8a, #3730a3);
+  color: white;
+  box-shadow: $shadow-xl;
+  
+  .header-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .logo-container {
+    width: 3rem;
+    height: 3rem;
+    background: white;
+    border-radius: 0.5rem;
+    @include flex-center;
+    
+    .logo-icon {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .header-info {
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0;
+      
+      @media (max-width: 768px) {
+        font-size: 1rem;
+      }
+    }
+    
+    p {
+      font-size: 0.875rem;
+      color: #93c5fd;
+      margin: 0.25rem 0 0 0;
+    }
+  }
+  
+  .header-right {
+    text-align: right;
+    
+    .header-title {
+      font-weight: 600;
+      margin: 0;
+    }
+    
+    .header-date {
+      font-size: 0.875rem;
+      color: #93c5fd;
+      margin: 0.25rem 0 0 0;
+    }
+  }
+}
+
+// Navigation
+.dashboard-nav {
+  background: white;
+  box-shadow: $shadow-md;
+  border-bottom: 1px solid $border-color;
+  
+  .nav-content {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+  }
+  
+  .nav-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    color: $text-secondary;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: $transition;
+    white-space: nowrap;
+    
+    .nav-icon {
+      font-size: 1rem;
+    }
+    
+    &:hover {
+      color: $secondary-color;
+      background: #eff6ff;
+    }
+    
+    &.active {
+      color: $secondary-color;
+      border-bottom-color: $secondary-color;
+      background: #eff6ff;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    .header-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .header-right {
+      text-align: left;
+    }
+  }
+}

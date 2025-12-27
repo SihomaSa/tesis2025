@@ -1,0 +1,388 @@
+<main class="dashboard-main">
+  
+  <!-- Dashboard View -->
+  <div *ngIf="activeView === 'dashboard'" class="view-container">
+    
+    <!-- KPIs -->
+    <div class="kpis-grid">
+      <div *ngFor="let kpi of kpis" class="kpi-card">
+        <div class="kpi-content">
+          <div class="kpi-info">
+            <p class="kpi-title">{{ kpi.title }}</p>
+            <h3 class="kpi-value">{{ kpi.value }}</h3>
+            <p class="kpi-change" [class.trend-up]="kpi.trend === 'up'">
+              {{ kpi.change }} vs mes anterior
+            </p>
+          </div>
+          <div class="kpi-icon" [ngClass]="kpi.color">
+            <span>{{ kpi.icon === 'message-square' ? '💬' : 
+                     kpi.icon === 'thumbs-up' ? '👍' : 
+                     kpi.icon === 'activity' ? '📈' : '📊' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="charts-grid">
+      
+      <!-- Sentiment Distribution -->
+      <div class="chart-card">
+        <h3 class="chart-title">Distribución de Sentimientos</h3>
+        <div class="pie-chart-container">
+          <div class="pie-chart">
+            <svg viewBox="0 0 200 200" class="pie-svg">
+              <circle cx="100" cy="100" r="80" fill="#10b981" 
+                      stroke-dasharray="315 628" 
+                      stroke-dashoffset="0" 
+                      transform="rotate(-90 100 100)"/>
+              <circle cx="100" cy="100" r="80" fill="#f59e0b" 
+                      stroke-dasharray="185 628" 
+                      stroke-dashoffset="-315" 
+                      transform="rotate(-90 100 100)"/>
+              <circle cx="100" cy="100" r="80" fill="#ef4444" 
+                      stroke-dasharray="128 628" 
+                      stroke-dashoffset="-500" 
+                      transform="rotate(-90 100 100)"/>
+            </svg>
+            <div class="pie-center">
+              <p class="pie-total">{{ getTotalComments() }}</p>
+              <p class="pie-label">Total</p>
+            </div>
+          </div>
+          <div class="pie-legend">
+            <div *ngFor="let item of sentimentData" class="legend-item">
+              <span class="legend-color" [style.background-color]="item.color"></span>
+              <span class="legend-text">{{ item.name }}: {{ item.value }} ({{ getSentimentPercentage(item.name) | number:'1.1-1' }}%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time Series -->
+      <div class="chart-card">
+        <h3 class="chart-title">Tendencia Temporal</h3>
+        <div class="line-chart-container">
+          <div class="line-chart">
+            <svg viewBox="0 0 400 200" class="line-svg">
+              <!-- Grid lines -->
+              <line *ngFor="let y of [0, 50, 100, 150, 200]" 
+                    x1="40" [attr.y1]="y" x2="380" [attr.y2]="y" 
+                    stroke="#e5e7eb" stroke-width="1"/>
+              
+              <!-- Lines for each sentiment -->
+              <polyline 
+                points="60,155 120,148 180,142 240,138 300,132 360,129"
+                fill="none" stroke="#10b981" stroke-width="3"/>
+              <polyline 
+                points="60,175 120,172 180,170 240,168 300,165 360,162"
+                fill="none" stroke="#f59e0b" stroke-width="3"/>
+              <polyline 
+                points="60,185 120,182 180,180 240,184 300,186 360,188"
+                fill="none" stroke="#ef4444" stroke-width="3"/>
+            </svg>
+          </div>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot bg-green"></span> Positivo</span>
+            <span class="legend-item"><span class="legend-dot bg-yellow"></span> Neutral</span>
+            <span class="legend-item"><span class="legend-dot bg-red"></span> Negativo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Topics and Radar -->
+    <div class="charts-grid">
+      
+      <!-- Topics Bar Chart -->
+      <div class="chart-card">
+        <h3 class="chart-title">Sentimientos por Tema</h3>
+        <div class="bar-chart-container">
+          <div *ngFor="let topic of topicsData" class="bar-group">
+            <div class="bar-label">{{ topic.tema }}</div>
+            <div class="bars">
+              <div class="bar-wrapper">
+                <div class="bar bar-positive" 
+                     [style.width]="getBarWidth(topic.positivo, 100)">
+                  <span class="bar-value">{{ topic.positivo }}</span>
+                </div>
+              </div>
+              <div class="bar-wrapper">
+                <div class="bar bar-neutral" 
+                     [style.width]="getBarWidth(topic.neutral, 100)">
+                  <span class="bar-value">{{ topic.neutral }}</span>
+                </div>
+              </div>
+              <div class="bar-wrapper">
+                <div class="bar bar-negative" 
+                     [style.width]="getBarWidth(topic.negativo, 100)">
+                  <span class="bar-value">{{ topic.negativo }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Palabras Más Comunes -->
+      <div class="chart-card">
+        <h3 class="chart-title">📝 Palabras Más Comunes</h3>
+        <div class="words-container colorful">
+          <div *ngFor="let word of commonWords; let i = index" 
+               class="word-item" 
+               [attr.data-rank]="i + 1">
+            <div class="word-header">
+              <span class="word-text">{{ word.word }}</span>
+              <span class="word-count">{{ word.count }} ({{ word.percentage | number:'1.1-1' }}%)</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width]="getWordBarWidth(word.count)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Radar Chart -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3 class="chart-title">Índice de Satisfacción por Categoría</h3>
+        <div class="radar-chart-container">
+          <div class="radar-chart">
+            <svg viewBox="0 0 300 300" class="radar-svg">
+              <!-- Radar grid -->
+              <polygon points="150,50 220,100 220,200 150,250 80,200 80,100" 
+                      fill="none" stroke="#e5e7eb" stroke-width="1"/>
+              <polygon points="150,90 195,120 195,180 150,210 105,180 105,120" 
+                      fill="none" stroke="#e5e7eb" stroke-width="1"/>
+              <polygon points="150,130 170,140 170,160 150,170 130,160 130,140" 
+                      fill="none" stroke="#e5e7eb" stroke-width="1"/>
+              
+              <!-- Radar lines -->
+              <line x1="150" y1="150" x2="150" y2="50" stroke="#e5e7eb" stroke-width="1"/>
+              <line x1="150" y1="150" x2="220" y2="100" stroke="#e5e7eb" stroke-width="1"/>
+              <line x1="150" y1="150" x2="220" y2="200" stroke="#e5e7eb" stroke-width="1"/>
+              <line x1="150" y1="150" x2="150" y2="250" stroke="#e5e7eb" stroke-width="1"/>
+              <line x1="150" y1="150" x2="80" y2="200" stroke="#e5e7eb" stroke-width="1"/>
+              <line x1="150" y1="150" x2="80" y2="100" stroke="#e5e7eb" stroke-width="1"/>
+              
+              <!-- Data polygon -->
+              <polygon [attr.points]="getPolygonPoints()" 
+                      fill="#3b82f6" fill-opacity="0.3" stroke="#3b82f6" stroke-width="2"/>
+              
+              <!-- Data points -->
+              <circle *ngFor="let point of getDataPoints()" 
+                      [attr.cx]="point.x" 
+                      [attr.cy]="point.y" 
+                      r="4" fill="#3b82f6"/>
+            </svg>
+          </div>
+          <div class="radar-labels">
+            <div *ngFor="let item of radarData" class="radar-label-item">
+              <strong>{{ item.categoria }}:</strong>
+              <span>{{ item.valor }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Comments -->
+    <div class="chart-card">
+      <h3 class="chart-title">Comentarios Recientes</h3>
+      <div class="comments-list">
+        <div *ngFor="let comment of recentComments" class="comment-card">
+          <div class="comment-content">
+            <p class="comment-text">{{ comment.text }}</p>
+            <div class="comment-meta">
+              <span class="meta-item">📅 {{ comment.date }}</span>
+              <span class="meta-item">👥 {{ comment.engagement }} interacciones</span>
+              <span class="meta-item">Confianza: {{ (comment.confidence * 100) | number:'1.0-0' }}%</span>
+            </div>
+          </div>
+          <div class="comment-sentiment" [ngClass]="getSentimentClass(comment.sentiment)">
+            <span class="sentiment-icon">{{ getSentimentIcon(comment.sentiment) }}</span>
+            {{ comment.sentiment }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analysis View -->
+  <div *ngIf="activeView === 'analysis'" class="view-container">
+    <div class="chart-card">
+      <h3 class="chart-title">Análisis de Sentimiento Individual</h3>
+      <div class="analysis-form">
+        <label class="form-label">Ingrese comentario a analizar:</label>
+        <textarea 
+          [(ngModel)]="selectedComment"
+          class="form-textarea"
+          rows="4"
+          placeholder="Ejemplo: La universidad tiene excelentes profesores y muy buena infraestructura...">
+        </textarea>
+        <button 
+          (click)="analyzeSingleComment()"
+          [disabled]="!selectedComment.trim()"
+          class="btn-primary">
+          🔍 Analizar Sentimiento
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="analysisResult" class="chart-card analysis-result">
+      <h3 class="chart-title">Resultados del Análisis</h3>
+      
+      <div class="result-main">
+        <div class="result-header">
+          <span class="result-label">Sentimiento Detectado</span>
+          <div class="result-sentiment" [ngClass]="getSentimentClass(analysisResult.sentiment)">
+            <span class="sentiment-icon">{{ getSentimentIcon(analysisResult.sentiment) }}</span>
+            {{ analysisResult.sentiment }}
+          </div>
+        </div>
+        
+        <div class="confidence-bar">
+          <div class="confidence-header">
+            <span>Nivel de Confianza</span>
+            <span class="confidence-value">{{ (analysisResult.confidence * 100) | number:'1.1-1' }}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="analysisResult.confidence * 100"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="probabilities">
+        <h4 class="probabilities-title">Distribución de Probabilidades</h4>
+        
+        <div class="probability-item">
+          <div class="probability-header">
+            <span class="probability-label positive">🟢 Positivo</span>
+            <span class="probability-value">{{ (analysisResult.probabilities.positivo * 100) | number:'1.1-1' }}%</span>
+          </div>
+          <div class="progress-bar small">
+            <div class="progress-fill positive" [style.width.%]="analysisResult.probabilities.positivo * 100"></div>
+          </div>
+        </div>
+
+        <div class="probability-item">
+          <div class="probability-header">
+            <span class="probability-label neutral">🟡 Neutral</span>
+            <span class="probability-value">{{ (analysisResult.probabilities.neutral * 100) | number:'1.1-1' }}%</span>
+          </div>
+          <div class="progress-bar small">
+            <div class="progress-fill neutral" [style.width.%]="analysisResult.probabilities.neutral * 100"></div>
+          </div>
+        </div>
+
+        <div class="probability-item">
+          <div class="probability-header">
+            <span class="probability-label negative">🔴 Negativo</span>
+            <span class="probability-value">{{ (analysisResult.probabilities.negativo * 100) | number:'1.1-1' }}%</span>
+          </div>
+          <div class="progress-bar small">
+            <div class="progress-fill negative" [style.width.%]="analysisResult.probabilities.negativo * 100"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-metadata">
+        <div class="metadata-item">
+          <span class="metadata-label">Fecha de Análisis:</span>
+          <p class="metadata-value">{{ analysisResult.timestamp }}</p>
+        </div>
+        <div class="metadata-item">
+          <span class="metadata-label">Longitud del Texto:</span>
+          <p class="metadata-value">{{ analysisResult.comment.length }} caracteres</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reports View -->
+  <div *ngIf="activeView === 'reports'" class="view-container">
+    <div class="chart-card">
+      <div class="report-header">
+        <h3 class="chart-title">Reporte Ejecutivo</h3>
+        <button (click)="exportReport()" class="btn-export">
+          📥 Exportar PDF
+        </button>
+      </div>
+
+      <div class="report-content">
+        <div class="report-banner">
+          <h2>Universidad Nacional Mayor de San Marcos</h2>
+          <p class="report-subtitle">Análisis de Sentimientos - Instagram</p>
+          <p class="report-period">Período: Noviembre 2025</p>
+        </div>
+
+        <section class="report-section">
+          <h3>📊 Resumen Ejecutivo</h3>
+          <div class="section-content">
+            <p>
+              Durante el período analizado se procesaron <strong>868 comentarios</strong> de Instagram relacionados con la UNMSM. 
+              El análisis revela una percepción predominantemente positiva (<strong>52.6%</strong>), con un engagement rate de <strong>8.4%</strong> 
+              y una confianza promedio del modelo de <strong>86.3%</strong>.
+            </p>
+          </div>
+        </section>
+
+        <section class="report-section">
+          <h3>🎯 Hallazgos Principales</h3>
+          <ul class="findings-list">
+            <li class="finding-item positive">
+              <span class="finding-icon">✓</span>
+              Los comentarios sobre <strong>docentes</strong> muestran la mayor satisfacción (80% positivos)
+            </li>
+            <li class="finding-item positive">
+              <span class="finding-icon">✓</span>
+              Tendencia creciente de sentimiento positivo en las últimas 3 semanas (+5.2%)
+            </li>
+            <li class="finding-item warning">
+              <span class="finding-icon">⚠</span>
+              Área de mejora identificada: <strong>servicios administrativos</strong> (45% positivos, 25% negativos)
+            </li>
+            <li class="finding-item info">
+              <span class="finding-icon">ℹ</span>
+              Mayor engagement en publicaciones sobre logros académicos e investigación
+            </li>
+          </ul>
+        </section>
+
+        <section class="report-section">
+          <h3>💡 Recomendaciones</h3>
+          <div class="recommendations-grid">
+            <div class="recommendation-card positive">
+              <h4>🚀 Potenciar</h4>
+              <ul>
+                <li>Contenido sobre excelencia docente</li>
+                <li>Historias de éxito de estudiantes</li>
+                <li>Investigaciones y publicaciones</li>
+              </ul>
+            </div>
+            <div class="recommendation-card warning">
+              <h4>🔧 Mejorar</h4>
+              <ul>
+                <li>Procesos administrativos</li>
+                <li>Infraestructura tecnológica</li>
+                <li>Tiempo de respuesta en servicios</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="report-section">
+          <h3>📈 Conclusiones</h3>
+          <div class="section-content conclusion">
+            <p>
+              La UNMSM mantiene una imagen positiva en redes sociales, respaldada por la calidad de su planta docente 
+              y sus logros académicos. Se recomienda mantener el foco en la comunicación de estos aspectos mientras se 
+              trabaja en las áreas de mejora identificadas, particularmente en la modernización de procesos administrativos.
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>

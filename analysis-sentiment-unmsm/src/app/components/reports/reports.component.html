@@ -1,0 +1,215 @@
+<div class="reports-container">
+  <div class="chart-card">
+    <div class="report-header">
+      <h3 class="chart-title">Reporte Ejecutivo</h3>
+      <div class="report-actions">
+        <select [(ngModel)]="selectedPeriod" (change)="onPeriodChange()" class="period-select">
+          <option value="current">Mes Actual</option>
+          <option value="last">Mes Anterior</option>
+          <option value="quarter">Último Trimestre</option>
+          <option value="year">Año Actual</option>
+        </select>
+        <button (click)="exportReport()" class="btn-export">
+          📥 Exportar PDF
+        </button>
+      </div>
+    </div>
+
+    <div class="report-content">
+      <div class="report-banner">
+        <h2>Universidad Nacional Mayor de San Marcos</h2>
+        <p class="report-subtitle">Análisis de Sentimientos - Instagram</p>
+        <p class="report-period">Período: {{ getPeriodText() }}</p>
+        <p class="report-generated">Generado: {{ getCurrentDate() }}</p>
+      </div>
+
+      <section class="report-section">
+        <h3>📊 Resumen Ejecutivo</h3>
+        <div class="section-content">
+          <p>
+            Durante el período analizado se procesaron <strong>{{ totalComments }}</strong> comentarios de Instagram relacionados con la UNMSM. 
+            El análisis revela una percepción predominantemente positiva (<strong>{{ positivePercentage }}%</strong>), con un engagement rate de <strong>{{ engagementRate }}%</strong> 
+            y una confianza promedio del modelo de <strong>{{ avgConfidence }}%</strong>.
+          </p>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-card positive">
+            <div class="stat-icon">👍</div>
+            <div class="stat-content">
+              <p class="stat-label">Comentarios Positivos</p>
+              <h4 class="stat-value">{{ positiveComments }}</h4>
+              <p class="stat-percentage">{{ positivePercentage }}%</p>
+            </div>
+          </div>
+          
+          <div class="stat-card neutral">
+            <div class="stat-icon">➖</div>
+            <div class="stat-content">
+              <p class="stat-label">Comentarios Neutrales</p>
+              <h4 class="stat-value">{{ neutralComments }}</h4>
+              <p class="stat-percentage">{{ neutralPercentage }}%</p>
+            </div>
+          </div>
+          
+          <div class="stat-card negative">
+            <div class="stat-icon">👎</div>
+            <div class="stat-content">
+              <p class="stat-label">Comentarios Negativos</p>
+              <h4 class="stat-value">{{ negativeComments }}</h4>
+              <p class="stat-percentage">{{ negativePercentage }}%</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="report-section">
+        <h3>🎯 Hallazgos Principales</h3>
+        <ul class="findings-list">
+          <li class="finding-item positive">
+            <span class="finding-icon">✓</span>
+            Los comentarios sobre <strong>docentes</strong> muestran la mayor satisfacción (80% positivos)
+          </li>
+          <li class="finding-item positive">
+            <span class="finding-icon">✓</span>
+            Tendencia creciente de sentimiento positivo en las últimas 3 semanas (+5.2%)
+          </li>
+          <li class="finding-item warning">
+            <span class="finding-icon">⚠</span>
+            Área de mejora identificada: <strong>servicios administrativos</strong> (45% positivos, 25% negativos)
+          </li>
+          <li class="finding-item info">
+            <span class="finding-icon">ℹ</span>
+            Mayor engagement en publicaciones sobre logros académicos e investigación
+          </li>
+          <li class="finding-item positive">
+            <span class="finding-icon">✓</span>
+            La infraestructura ha recibido <strong>{{ infrastructurePositive }}%</strong> de comentarios positivos
+          </li>
+        </ul>
+      </section>
+
+      <section class="report-section">
+        <h3>📈 Análisis por Categorías</h3>
+        <div class="categories-grid">
+          <div *ngFor="let category of categories" class="category-card">
+            <div class="category-header">
+              <h4>{{ category.name }}</h4>
+              <span class="category-score" [ngClass]="getScoreClass(category.score)">
+                {{ category.score }}%
+              </span>
+            </div>
+            <div class="category-bar">
+              <div class="category-fill" [style.width.%]="category.score" [ngClass]="getScoreClass(category.score)"></div>
+            </div>
+            <p class="category-description">{{ category.description }}</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="report-section">
+        <h3>💡 Recomendaciones</h3>
+        <div class="recommendations-grid">
+          <div class="recommendation-card positive">
+            <h4>🚀 Potenciar</h4>
+            <ul>
+              <li>Contenido sobre excelencia docente</li>
+              <li>Historias de éxito de estudiantes</li>
+              <li>Investigaciones y publicaciones</li>
+              <li>Logros deportivos y culturales</li>
+              <li>Convenios internacionales</li>
+            </ul>
+          </div>
+          <div class="recommendation-card warning">
+            <h4>🔧 Mejorar</h4>
+            <ul>
+              <li>Procesos administrativos</li>
+              <li>Infraestructura tecnológica</li>
+              <li>Tiempo de respuesta en servicios</li>
+              <li>Comunicación institucional</li>
+              <li>Accesibilidad digital</li>
+            </ul>
+          </div>
+          <div class="recommendation-card info">
+            <h4>📊 Monitorear</h4>
+            <ul>
+              <li>Satisfacción en servicios de biblioteca</li>
+              <li>Calidad de laboratorios</li>
+              <li>Eventos académicos</li>
+              <li>Programas de tutoría</li>
+              <li>Actividades extracurriculares</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="report-section">
+        <h3>🔍 Insights Detallados</h3>
+        <div class="insights-container">
+          <div class="insight-card">
+            <div class="insight-header">
+              <span class="insight-icon">💬</span>
+              <h4>Palabras Más Mencionadas</h4>
+            </div>
+            <div class="words-cloud">
+              <span *ngFor="let word of topWords" class="word-tag" [style.font-size.px]="word.size">
+                {{ word.text }}
+              </span>
+            </div>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-header">
+              <span class="insight-icon">📅</span>
+              <h4>Mejor Día de la Semana</h4>
+            </div>
+            <div class="insight-content">
+              <p class="insight-highlight">{{ bestDay }}</p>
+              <p class="insight-description">Con un promedio de {{ bestDayEngagement }} interacciones por publicación</p>
+            </div>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-header">
+              <span class="insight-icon">⏰</span>
+              <h4>Mejor Horario</h4>
+            </div>
+            <div class="insight-content">
+              <p class="insight-highlight">{{ bestTime }}</p>
+              <p class="insight-description">Mayor engagement entre {{ bestTimeRange }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="report-section">
+        <h3>📈 Conclusiones</h3>
+        <div class="section-content conclusion">
+          <p>
+            La UNMSM mantiene una imagen positiva en redes sociales, respaldada por la calidad de su planta docente 
+            y sus logros académicos. Se recomienda mantener el foco en la comunicación de estos aspectos mientras se 
+            trabaja en las áreas de mejora identificadas, particularmente en la modernización de procesos administrativos.
+          </p>
+          <p>
+            El análisis revela que la comunidad universitaria valora especialmente la excelencia académica, la infraestructura
+            renovada y las oportunidades de investigación. Sin embargo, existe espacio para mejorar en la agilidad de los
+            trámites administrativos y la comunicación institucional.
+          </p>
+          <p>
+            Se sugiere implementar las recomendaciones priorizadas en este reporte para mantener y mejorar la percepción
+            positiva de la institución en redes sociales durante el próximo período.
+          </p>
+        </div>
+      </section>
+
+      <div class="report-footer">
+        <div class="footer-info">
+          <p><strong>Metodología:</strong> Análisis de sentimientos mediante NLP con modelo BERT fine-tuned</p>
+          <p><strong>Fuente de datos:</strong> Instagram @unmsm_oficial</p>
+          <p><strong>Período de análisis:</strong> {{ getPeriodText() }}</p>
+          <p><strong>Generado por:</strong> Sistema de Análisis de Sentimientos v3.0</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
