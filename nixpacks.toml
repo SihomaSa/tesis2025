@@ -1,8 +1,5 @@
-[variables]
-NIXPACKS_BUILD_DIR = "BACKEND"
-
 [phases.setup]
-nixPkgs = ['nodejs_22', 'npm-9_x']
+nixPkgs = ['nodejs', 'npm']
 
 [phases.install]
 cmds = ['cd BACKEND && npm i']
