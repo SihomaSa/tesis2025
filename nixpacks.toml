@@ -1,11 +1,11 @@
 [phases.setup]
-nixPkgs = ['nodejs']
+nixPkgs = ['python312', 'pip']
 
 [phases.install]
-cmds = ['cd BACKEND && npm i']
+cmds = ['cd BACKEND && pip install -r requirements.txt']
 
 [phases.build]
 cmds = []
 
 [start]
-cmd = 'cd BACKEND && npm start'
+cmd = 'cd BACKEND && python main.py'
