@@ -27,3 +27,7 @@ data/dataset_instagram_unmsm.csv
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Scripts locales
+scripts/
+temp/

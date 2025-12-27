@@ -3,13 +3,22 @@ version = "3.13"
 
 [phases.setup]
 cmds = [
-    "python -m pip install --upgrade pip setuptools wheel",
-    "pip install numpy==1.26.4",
-    "pip install 'scipy==1.16.3' --no-build-isolation"
+    "echo '=== SETUP PYTHON ==='",
+    "python --version",
+    "pip --version"
 ]
 
 [phases.install]
-cmds = ["pip install -r requirements.txt"]
+cmds = [
+    "echo '=== INSTALLING DEPENDENCIES ==='",
+    "pip install --upgrade pip setuptools wheel",
+    "pip install numpy==1.26.4",
+    "pip install 'scipy==1.16.3' --no-build-isolation",
+    "pip install -r requirements.txt"
+]
+
+[phases.build]
+cmds = ["echo '=== BUILD COMPLETE ==='"]
 
 [start]
 cmd = "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
