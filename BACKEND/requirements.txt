@@ -5,19 +5,18 @@ python-multipart==0.0.6
 
 # ============== DATA SCIENCE ==============
 numpy==1.26.4
-scipy==1.16.3
-scikit-learn==1.8.0
-pandas==2.2.1
+scipy==1.11.4
+scikit-learn==1.3.2
+pandas==2.1.4
 joblib==1.3.2
 
 # ============== NLP ==============
 nltk==3.8.1
 
 # ============== UTILITIES ==============
-pydantic>=2.9.2
+pydantic>=2.5.0
 python-dotenv==1.0.0
 python-dateutil==2.8.2
 
 # ============== SECURITY ==============
 python-jose[cryptography]==3.3.0
-fastapi-cors==0.0.6
