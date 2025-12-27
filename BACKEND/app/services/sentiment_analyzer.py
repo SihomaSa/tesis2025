@@ -1,3 +1,19 @@
+# Monkey patch para compatibilidad con scikit-learn
+import sklearn.utils
+if not hasattr(sklearn.utils, "parse_version"):
+    try:
+        from pkg_resources import parse_version
+        sklearn.utils.parse_version = parse_version
+        print("✅ Applied parse_version patch")
+    except ImportError:
+        def simple_parse_version(v):
+            try:
+                return tuple(map(int, v.split(".")))
+            except:
+                return v
+        sklearn.utils.parse_version = simple_parse_version
+        print("✅ Applied simple parse_version patch")
+
 """
 SERVICIO PRINCIPAL DE ANÁLISIS DE SENTIMIENTOS - UNMSM
 Versión: 3.1 Corregida
@@ -21,7 +37,7 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier,
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
-from imblearn.over_sampling import SMOTE
+# # from imblearn.over_sampling import SMOTE
 from sklearn.preprocessing import StandardScaler
 from collections import Counter
 
@@ -1030,7 +1046,7 @@ class SentimentAnalyzer:
         # Balancear con SMOTE
         logger.info("Aplicando SMOTE para balanceo...")
         k_neighbors = min(5, min(Counter(y_train).values()) - 1)
-        smote = SMOTE(random_state=settings.RANDOM_STATE, k_neighbors=k_neighbors)
+        # smote = SMOTE(random_state=settings.RANDOM_STATE, k_neighbors=k_neighbors)
         X_train_bal, y_train_bal = smote.fit_resample(X_train, y_train)
         
         logger.info(f"Datos balanceados: {Counter(y_train_bal)}")

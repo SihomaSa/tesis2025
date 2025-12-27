@@ -1,97 +1,29 @@
-# ==========================================
-# GITIGNORE - UNMSM SENTIMENT API
-# ==========================================
-
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# Virtual environments
+env/
 venv/
 ENV/
-env/
-.venv
+env.bak/
+venv.bak/
 
-# PyCharm
-.idea/
-
-# VS Code
-.vscode/
-*.code-workspace
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# Environment variables
+# Datos sensibles
 .env
-.env.local
-.env.*.local
+*.pkl
+*.joblib
 
 # Logs
 logs/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Temporary files
-temp/
-tmp/
-*.tmp
-*.bak
-*.swp
-*~
-
-# Reports (generados)
-reports/*.pdf
-reports/*.xlsx
-
-# ⚠️ NO IGNORAR el dataset (es necesario para Railway)
-# data/
-
-# Modelos ML generados (se entrenan en Railway)
-ml_models/*.pkl
-ml_models/*.joblib
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
+# Dataset (opcional)
+data/dataset_instagram_unmsm.csv
 
 # Railway
 .railway/
 
-# Node (si usas frontend)
-node_modules/
-package-lock.json
-yarn.lock
-
-# Compiled Angular
-dist/
-.angular/
+# Sistema
+.DS_Store
+Thumbs.db

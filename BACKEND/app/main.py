@@ -13,7 +13,12 @@ import uvicorn
 import logging
 from datetime import datetime
 from pathlib import Path
-
+import sklearn.utils
+if not hasattr(sklearn.utils, 'parse_version'):
+    from pkg_resources import parse_version as parse_version_
+    sklearn.utils.parse_version = parse_version_
+    print("✅ Applied monkey patch for sklearn.utils.parse_version")
+from fastapi import FastAPI
 # 🔥 CORRECCIÓN PARA WINDOWS - Configurar encoding UTF-8
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
