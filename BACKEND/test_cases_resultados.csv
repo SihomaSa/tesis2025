@@ -1,0 +1,53 @@
+texto,esperado,predicho,correcto,confianza
+y en el ranking internacional?,Neutral,Neutral,True,0.8508603594398836
+Igual. Esta bien.,Neutral,Neutral,True,0.5844938687412014
+hasta donde sé ya no figura,Neutral,Negativo,False,0.7132552245001201
+Y en el ranking nacional?,Neutral,Neutral,True,0.863361958138477
+Cuando es la próxima fecha?,Neutral,Neutral,True,0.7420900010674661
+¿A qué hora se presentan?,Neutral,Neutral,True,0.9802170427442057
+Horario del open day por favor,Neutral,Neutral,True,0.7948340946208857
+Información?,Neutral,Neutral,True,0.9354312800642408
+Link?,Neutral,Neutral,True,0.8867671773573241
+Gracias,Neutral,Positivo,False,0.8337039221144259
+Ok,Neutral,Negativo,False,0.6336887625092054
+Entendido,Neutral,Negativo,False,0.5358214198606743
+Ya,Neutral,Negativo,False,0.6336887625092057
+Orgulloso de nuestra alma mater ❤️,Positivo,Positivo,True,0.9510528488188079
+Felicitaciones a la Decana de América! 👏,Positivo,Positivo,True,0.9810352185184715
+Excelente Decana de América. 👏👏👏,Positivo,Positivo,True,1.0
+No me sorprende 🔥,Positivo,Positivo,True,0.8958444294224003
+Siempre San Marcos. 👏🏻👏🏻👏🏻,Positivo,Positivo,True,0.9917428058555048
+Grande mi San Marcos 🔥,Positivo,Positivo,True,0.9797636754013648
+Felicitaciones muchachones,Positivo,Positivo,True,0.9995833333333334
+Bien merecido...vamos UNMSM,Positivo,Positivo,True,0.9561080870917574
+La verdadera inalcanzable 🔥,Positivo,Positivo,True,0.9187518100425849
+Crack el cm 🔥,Positivo,Positivo,True,0.9648329493087557
+Súbanle el sueldo al de marketing,Positivo,Positivo,True,0.41451211849059244
+Lo máximo! 🙌,Positivo,Positivo,True,0.9176829663563548
+Eres un capo,Positivo,Positivo,True,0.97
+Que orgullo compaññero!!,Positivo,Positivo,True,0.9850685357336897
+Mi querida alma Mater ❤️,Positivo,Positivo,True,0.8348557978946635
+Feliz aniversario Decana de América,Positivo,Positivo,True,0.8808939190669723
+Ya pero que nos devuelvan el acceso a Scopus,Negativo,Negativo,True,0.7473388885350069
+Lamentablemente viene retrocediendo hace décadas 😢,Negativo,Positivo,False,0.49110448479781355
+Hemos bajado al 951-1000 y lo presumen,Negativo,Negativo,True,0.41279458368286226
+La mitad de la vida universitaria es hacer cola😂,Negativo,Positivo,False,0.7933522627102889
+Veremos si es arroz con pollo o seco con huesito. 😢,Negativo,Negativo,True,0.5734966266621593
+Rectorado? Es deber de la oficina de bienestar,Negativo,Negativo,True,0.5546606270021316
+No hay papel en los baños ps,Negativo,Negativo,True,0.4764606135650132
+me robaron mi mochila,Negativo,Negativo,True,0.5640142806031939
+pésima gestión,Negativo,Negativo,True,0.41842327171876
+Lástima que ya no sea la primera universidad del Perú,Negativo,Negativo,True,0.6958345265069222
+Siempre por sus alumnos nunca por sus autoridades 👎,Negativo,Negativo,True,0.4396641214810776
+A pesar de la gestión siempre San Marquina ❤️,Positivo,Neutral,False,0.6655119881186882
+Lo mejor de lo peor 😏😏,Negativo,Positivo,False,0.36751757722236716
+Gracias Jeri 😮‍💨😮‍💨,Negativo,Negativo,True,0.7883522206841136
+Nro 1 a pesar de Jerí 🙌,Positivo,Neutral,False,0.7511800940754353
+JAJAJA,Neutral,Neutral,True,0.800197556579916
+yo quierooo participar,Positivo,Positivo,True,0.6094155815249644
+Mi futura facultad,Positivo,Positivo,True,0.6651808008705915
+UNMSM tiene historia y prestigio,Positivo,Positivo,True,0.7887131398001099
+Para mí siempre es un orgullo presentarme como sanmarquina,Positivo,Neutral,False,0.48004661267638793
+Subjetivo. Un ranking oficial le daría objetividad,Neutral,Positivo,False,0.6330336717618694
+Con revisar anteriores rankings basta,Neutral,Positivo,False,0.7364141796436603
+Sería bacán que la Sunedu lo formalice,Positivo,Positivo,True,0.653058981003415
