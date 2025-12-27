@@ -17,10 +17,10 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar TODO el contenido de BACKEND
-COPY BACKEND/ .
+COPY BACKEND/ /app/
 
 # Crear directorio de logs
-RUN mkdir -p logs
+RUN mkdir -p /app/logs
 
 # Exponer el puerto
 EXPOSE 8000
@@ -29,5 +29,5 @@ EXPOSE 8000
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
-# Comando para iniciar la aplicación - corregido
-CMD ["python", "main.py"]
+# Comando para iniciar - usando uvicorn directamente
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
