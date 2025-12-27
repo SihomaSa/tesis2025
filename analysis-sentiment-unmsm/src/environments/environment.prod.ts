@@ -21,10 +21,10 @@ export const environment = {
     appId: "1:592931095236:web:7bed683a4bd9a2d774ff91",
     measurementId: "G-PZWWPXB147"
   },
-  // URL de tu API de Machine Learning
-  mlApiUrl: 'https://sihomasa-agripredic.hf.space/api/predict',
-  
-  // Timeouts optimizados
-  apiTimeout: 30000, // 30 segundos para ML
-  defaultTimeout: 10000 // 10 segundos para otras APIs
+  apiUrl: 'https://tu-proyecto.railway.app',
+  backendUrl: 'https://tu-proyecto.railway.app/api',
+  mlApiUrl: 'https://...',
+  useLocalBackend: true,
+  apiTimeout: 30000,
+  defaultTimeout: 10000
 };

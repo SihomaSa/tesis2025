@@ -23,16 +23,10 @@ export const environment = {
     measurementId: "G-MCJV4MTVW8"
   },
   
-  // NUEVO: URL de tu backend local FastAPI
+  apiUrl: 'http://localhost:8000',
   backendUrl: 'http://localhost:8000/api',
-  
-  // URL de tu API de Machine Learning alternativa (Hugging Face)
-  mlApiUrl: 'https://sihomasa-analysis-sentiment-unmsm.hf.space/api/predict',
-  
-  // Usar backend local por defecto
-  useLocalBackend: true, // Cambiar a false para usar Hugging Face
-  
-  // Timeouts optimizados
-  apiTimeout: 30000, // 30 segundos para ML
-  defaultTimeout: 10000 // 10 segundos para otras APIs
+  mlApiUrl: 'https://...',
+  useLocalBackend: true,
+  apiTimeout: 30000,
+  defaultTimeout: 10000
 };

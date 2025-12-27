@@ -73,7 +73,7 @@ export interface DashboardData {
   providedIn: 'root'
 })
 export class StatisticsService {
-  private readonly API_URL = `${environment.apiUrl}/statistics`;
+  private readonly API_URL = `${environment.backendUrl}/statistics`;
   private readonly CACHE_TIME = 5 * 60 * 1000; // 5 minutos
   
   // Cache para evitar llamadas repetidas
@@ -202,7 +202,7 @@ export class StatisticsService {
   checkBackendHealth(): Observable<boolean> {
     console.log('🏥 Verificando salud del backend...');
     
-    return this.http.get<any>(`${environment.apiUrl}/health`, {
+    return this.http.get<any>(`${environment.backendUrl}/health`, {
       headers: { 'X-Health-Check': 'true' }
     }).pipe(
       map(response => {
