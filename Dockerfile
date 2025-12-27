@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 # Instalar dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el código de la aplicación
+# Copiar TODO el contenido de BACKEND
 COPY BACKEND/ .
 
 # Crear directorio de logs
@@ -25,5 +25,9 @@ RUN mkdir -p logs
 # Exponer el puerto
 EXPOSE 8000
 
-# Comando para iniciar la aplicación
-CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Configurar variables de entorno
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app
+
+# Comando para iniciar la aplicación - corregido
+CMD ["python", "main.py"]
