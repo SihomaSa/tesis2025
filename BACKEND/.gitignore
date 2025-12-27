@@ -1,33 +1,27 @@
-# Python
-__pycache__/
-*.py[cod]
-*.so
-.Python
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Datos sensibles
-.env
-*.pkl
-*.joblib
-
 # Logs
 logs/
 *.log
 
-# Dataset (opcional)
-data/dataset_instagram_unmsm.csv
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
 
-# Railway
-.railway/
+# Models
+ml_models/*.pkl
+ml_models/*.joblib
 
-# Sistema
-.DS_Store
-Thumbs.db
+# Environment
+.env
+.env.local
 
-# Scripts locales
-scripts/
-temp/
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
