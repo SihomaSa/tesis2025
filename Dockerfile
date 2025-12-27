@@ -16,14 +16,15 @@ RUN apt-get update && apt-get install -y \
 # Instalar dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar TODO el contenido de BACKEND al directorio /app
+# Copiar TODO el contenido de BACKEND
 COPY BACKEND/ .
 
-# Crear directorio de logs
-RUN mkdir -p logs
+# Crear directorios necesarios
+RUN mkdir -p logs data
 
-# Crear directorio de datos si no existe
-RUN mkdir -p data
+# DEBUG: Ver estructura de archivos
+RUN echo "=== Contenido de /app ===" && ls -la /app && \
+    echo "=== Contenido de /app/app ===" && ls -la /app/app 2>/dev/null || echo "No hay carpeta app"
 
 # Exponer el puerto
 EXPOSE 8000
@@ -32,6 +33,9 @@ EXPOSE 8000
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
-# Comando para iniciar la aplicación
-# Según tu main.py, el app está en "app.main:app"
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Iniciar la aplicación
+# Si main.py está en /app/main.py, usa esto:
+CMD ["python", "main.py"]
+
+# Si quieres usar uvicorn directamente (alternativa):
+# CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
