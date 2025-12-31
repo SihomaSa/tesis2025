@@ -1,74 +1,8 @@
-# ==========================================
-# GITIGNORE - TESIS 2025
-# ==========================================
-
-# Node.js
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-package-lock.json
-yarn.lock
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-*.egg-info/
-dist-python/
-build/
-venv/
-env/
-.venv/
-
-# IDEs
-.idea/
-.vscode/
-*.code-workspace
-.DS_Store
-Thumbs.db
-
-# Environment
+BACKEND/node_modules/
 .env
-.env.local
-.env.*.local
-
-# Logs
-logs/
+BACKEND/.env
+__pycache__/
+*.pyc
 *.log
-
-# Temporary
-temp/
-tmp/
-*.tmp
-*.bak
-*.swp
-
-# Railway
-.railway/
-
-# Angular
-.angular/
-.ng_pkg_build/
-
-# Reports generados
-BACKEND/reports/*.pdf
-BACKEND/reports/*.xlsx
-
-# Modelos ML generados (se entrenan en el servidor)
-BACKEND/ml_models/*.pkl
-BACKEND/ml_models/*.joblib
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-
-# ⚠️ IMPORTANTE: NO IGNORAR
-# BACKEND/data/dataset_instagram_unmsm.csv (necesario para Railway)
-# FRONTEND/dist/ después del build
-
-# Compiled output (mantener después del build para Railway)
-# FRONTEND/dist/
+instance/

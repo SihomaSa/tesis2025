@@ -385,7 +385,7 @@ if __name__ == "__main__":
     print("\nIniciando servidor FastAPI...\n")
     
     uvicorn.run(
-        "app.main:app",
+        "main:app",
         host=settings.HOST,
         port=settings.PORT,
         reload=settings.DEBUG,
