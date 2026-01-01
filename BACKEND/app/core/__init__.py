@@ -1,3 +1,7 @@
-"# Módulo core del sistema"
-# app/core/__init__.py
-from .dataset import dataset_manager
+"""
+Módulo core de la aplicación
+"""
+
+from .dataset import dataset_manager, DatasetManager
+
+__all__ = ['dataset_manager', 'DatasetManager']

@@ -14,17 +14,19 @@ import logging
 from datetime import datetime
 from pathlib import Path
 import sklearn.utils
-if not hasattr(sklearn.utils, 'parse_version'):
-    from pkg_resources import parse_version as parse_version_
-    sklearn.utils.parse_version = parse_version_
-    print("✅ Applied monkey patch for sklearn.utils.parse_version")
-from fastapi import FastAPI
+
 # 🔥 CORRECCIÓN PARA WINDOWS - Configurar encoding UTF-8
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
     sys.stderr.reconfigure(encoding='utf-8', errors='replace')
     os.environ["PYTHONUTF8"] = "1"
     os.environ["PYTHONIOENCODING"] = "utf-8"
+
+# Monkey patch para sklearn
+if not hasattr(sklearn.utils, 'parse_version'):
+    from pkg_resources import parse_version as parse_version_
+    sklearn.utils.parse_version = parse_version_
+    print("✅ Applied monkey patch for sklearn.utils.parse_version")
 
 # Importar rutas
 from app.routes import (
@@ -80,48 +82,44 @@ async def lifespan(app: FastAPI):
             try:
                 logger.info(f"Cargando dataset desde: {dataset_path}")
                 
-                # Cargar usando el dataset manager
-                dataset_loaded = dataset_manager.load_dataset(str(dataset_path))
-                if dataset_loaded:
-                    logger.info(f"[OK] Dataset cargado por manager: {len(dataset_manager.df)} registros")
+                # Cargar dataset usando el manager
+                dataset_df = dataset_manager.load_dataset(str(dataset_path))
+                
+                if dataset_df is not None and not dataset_df.empty:
+                    # Pasar el dataset al sentiment analyzer
+                    sentiment_analyzer.df = dataset_df
+                    logger.info(f"[OK] Dataset cargado por manager: {len(dataset_df)} registros")
                     
-                    # Ahora cargar en el sentiment analyzer también
-                    analyzer_loaded = sentiment_analyzer.load_dataset(str(dataset_path))
-                    if analyzer_loaded:
-                        logger.info(f"[OK] Dataset cargado en analyzer: {len(sentiment_analyzer.df)} registros")
+                    # Intentar entrenar el modelo
+                    try:
+                        logger.info("Cargando/entrenando modelo ML...")
+                        model_loaded = sentiment_analyzer.load_or_train_model()
                         
-                        # Mostrar estadísticas del dataset
-                        if sentiment_analyzer.df is not None and len(sentiment_analyzer.df) > 0:
-                            distribution = sentiment_analyzer.df['sentimiento'].value_counts().to_dict()
-                            logger.info(f"Distribución inicial: {distribution}")
-                            logger.info(f"Total comentarios: {len(sentiment_analyzer.df)}")
-                    else:
-                        logger.error("[ERROR] Falló carga en analyzer")
+                        if model_loaded:
+                            logger.info("✅ Modelo ML cargado/entrenado exitosamente")
+                            
+                            if hasattr(sentiment_analyzer, 'model_metadata') and sentiment_analyzer.model_metadata:
+                                logger.info("✅ Sistema funcionará con modelo ML")
+                            else:
+                                logger.warning("[WARN] Modelo sin metadata, usando configuración básica")
+                                logger.info("    Sistema funcionará con reglas heurísticas")
+                        else:
+                            logger.warning("[WARN] Modelo no disponible o no entrenado")
+                            logger.info("    Sistema funcionará con reglas heurísticas")
+                            
+                    except Exception as model_error:
+                        logger.error(f"[ERROR] Con modelo ML: {model_error}")
+                        logger.info("    Sistema funcionará con reglas heurísticas")
                 else:
-                    logger.error("[ERROR] Falló carga en dataset manager")
+                    logger.error("[ERROR] Dataset vacío o None después de cargar")
+                    logger.info("    Sistema funcionará en modo demo")
                     
             except Exception as e:
-                logger.error(f"[ERROR] Cargando dataset: {e}", exc_info=True)
-                logger.info("   Sistema funcionará en modo demo")
+                logger.error(f"[ERROR] Cargando dataset: {e}")
+                logger.info("    Sistema funcionará en modo demo")
         else:
             logger.warning(f"[WARN] Dataset no encontrado en: {dataset_path}")
             logger.info("   Sistema funcionará en modo demo")
-        
-        # 4. Entrenar o cargar modelo
-        try:
-            logger.info("Cargando/entrenando modelo ML...")
-            sentiment_analyzer.load_or_train_model()
-            
-            if sentiment_analyzer.model:
-                logger.info(" Modelo ML cargado exitosamente")
-                if sentiment_analyzer.model_metadata:
-                    logger.info(f" Accuracy: {sentiment_analyzer.model_metadata.get('accuracy', 0):.2%}")
-            else:
-                logger.warning("[WARN] Modelo no disponible")
-                
-        except Exception as e:
-            logger.error(f"[ERROR] Con modelo ML: {e}", exc_info=True)
-            logger.info("   Sistema funcionará con reglas heurísticas")
         
         logger.info("="*70)
         logger.info("[OK] SISTEMA INICIADO CORRECTAMENTE")
@@ -140,7 +138,7 @@ async def lifespan(app: FastAPI):
     logger.info("Cerrando Sistema de Análisis de Sentimientos UNMSM...")
     logger.info("="*70)
     
-    if sentiment_analyzer and sentiment_analyzer.model:
+    if sentiment_analyzer and hasattr(sentiment_analyzer, 'model') and sentiment_analyzer.model:
         try:
             sentiment_analyzer.save_model()
             logger.info("Modelo guardado exitosamente")
@@ -217,7 +215,7 @@ async def root():
     global sentiment_analyzer
     
     dataset_info = {}
-    if sentiment_analyzer and sentiment_analyzer.df is not None:
+    if sentiment_analyzer and hasattr(sentiment_analyzer, 'df') and sentiment_analyzer.df is not None:
         dataset_info = {
             "total_comments": len(sentiment_analyzer.df),
             "dataset_loaded": True
@@ -273,14 +271,17 @@ async def health_check():
             health_status["dataset_size"] = len(sentiment_analyzer.df)
             
             # Calcular distribución
-            distribution = sentiment_analyzer.df['sentimiento'].value_counts().to_dict()
-            health_status["dataset_distribution"] = distribution
+            try:
+                distribution = sentiment_analyzer.df['sentimiento'].value_counts().to_dict()
+                health_status["dataset_distribution"] = distribution
+            except Exception:
+                health_status["dataset_distribution"] = {}
         else:
             health_status["components"]["dataset"] = "not_loaded"
         
         if hasattr(sentiment_analyzer, 'model') and sentiment_analyzer.model is not None:
             health_status["components"]["model"] = "loaded"
-            if sentiment_analyzer.model_metadata:
+            if hasattr(sentiment_analyzer, 'model_metadata') and sentiment_analyzer.model_metadata:
                 health_status["model_accuracy"] = f"{sentiment_analyzer.model_metadata.get('accuracy', 0):.2%}"
         else:
             health_status["components"]["model"] = "not_loaded"
@@ -296,7 +297,7 @@ async def dataset_info():
     """Información detallada del dataset cargado"""
     global sentiment_analyzer
     
-    if not sentiment_analyzer or sentiment_analyzer.df is None:
+    if not sentiment_analyzer or not hasattr(sentiment_analyzer, 'df') or sentiment_analyzer.df is None:
         raise HTTPException(status_code=404, detail="Dataset no cargado")
     
     try:
@@ -304,6 +305,11 @@ async def dataset_info():
         
         # Calcular estadísticas
         total_comments = len(df)
+        
+        # Verificar que existe columna 'sentimiento'
+        if 'sentimiento' not in df.columns:
+            raise HTTPException(status_code=500, detail="Columna 'sentimiento' no encontrada en el dataset")
+        
         distribution = df['sentimiento'].value_counts().to_dict()
         
         # Calcular porcentajes
@@ -315,7 +321,7 @@ async def dataset_info():
         sample_comments = []
         for sentiment in ['Positivo', 'Neutral', 'Negativo']:
             if sentiment in df['sentimiento'].values:
-                sample = df[df['sentimiento'] == sentiment]['comentario'].head(3).tolist()
+                sample = df[df['sentimiento'] == sentiment]['comentario'].head(3).tolist() if 'comentario' in df.columns else []
                 sample_comments.append({
                     "sentiment": sentiment,
                     "comments": sample

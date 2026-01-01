@@ -1,0 +1,24 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Instalar dependencias del sistema
+RUN apt-get update && \
+    apt-get install -y gcc g++ && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copiar requirements
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar TODO el código
+COPY . .
+
+# Crear directorios necesarios
+RUN mkdir -p ml_models data logs reports temp app/utils
+
+# Puerto
+EXPOSE 8000
+
+# Comando
+CMD ["python", "main.py"]

@@ -1,0 +1,23 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y gcc g++ && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+# Crear .env CORRECTO (formato JSON)
+RUN rm -f .env
+RUN echo 'HOST="0.0.0.0"' > .env
+RUN echo 'PORT="8000"' >> .env
+RUN echo 'DEBUG="False"' >> .env
+RUN echo 'ALLOWED_ORIGINS=["http://localhost:8000","http://127.0.0.1:8000"]' >> .env
+
+RUN mkdir -p logs data ml_models reports temp
+
+EXPOSE 8000
+
+CMD ["python", "main.py"]

@@ -1,18 +1,26 @@
-"""
-SentimentAnalyzer - VERSIÓN CORREGIDA CON get_dataset_info() COMPLETO
-"""
+import os
+
+print("=== CORRIGIENDO SENTIMENT ANALYZER ===")
+
+# Contenido actualizado del sentiment analyzer
+sentiment_analyzer_content = '''
 import pandas as pd
 import numpy as np
+from typing import Tuple, Dict, Any, List
 import re
 import joblib
 import logging
 import os
+from collections import Counter
+import nltk
+from nltk.corpus import stopwords
 from datetime import datetime
+
+# Importaciones de scikit-learn
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
-from typing import Dict, Any, List, Tuple, Optional
 
 # Importación de SMOTE para balanceo
 try:
@@ -20,16 +28,17 @@ try:
     HAS_SMOTE = True
 except ImportError:
     HAS_SMOTE = False
+    print("⚠️  SMOTE no disponible, continuando sin balanceo")
 
 logger = logging.getLogger(__name__)
 
 class SentimentAnalyzer:
     """
     Analizador de sentimientos para comentarios de Instagram UNMSM
+    Versión CORREGIDA con métodos que coinciden con las rutas
     """
     
     def __init__(self, model_path: str = None):
-        self.logger = logger
         self.df = None
         self.model = None
         self.vectorizer = None
@@ -49,26 +58,18 @@ class SentimentAnalyzer:
         self.model_metadata = {}
         self.training_report = {}
         
-        # Dataset info
-        self.dataset = None
-        self.dataset_size = 0
-        
         # Stopwords en español
         try:
-            import nltk
-            from nltk.corpus import stopwords
             self.spanish_stopwords = set(stopwords.words('spanish'))
         except:
             self.spanish_stopwords = set()
-            logger.warning("No se pudieron cargar stopwords en español")
+            print("⚠️  No se pudieron cargar stopwords en español")
     
     def load_dataset(self, filepath: str) -> bool:
         """Carga el dataset desde CSV"""
         try:
             logger.info(f"Cargando dataset desde: {filepath}")
             self.df = pd.read_csv(filepath, encoding="utf-8")
-            self.dataset = self.df
-            self.dataset_size = len(self.df)
             logger.info(f"Dataset cargado: {len(self.df)} registros")
             
             # Renombrar columnas automáticamente
@@ -82,16 +83,13 @@ class SentimentAnalyzer:
             
             if column_mapping:
                 self.df = self.df.rename(columns=column_mapping)
-                self.dataset = self.df
             
             # Si no tenemos las columnas necesarias, crearlas
             if 'texto_comentario' not in self.df.columns and len(self.df.columns) > 0:
                 self.df = self.df.rename(columns={self.df.columns[0]: 'texto_comentario'})
-                self.dataset = self.df
             
             if 'sentimiento' not in self.df.columns:
                 self.df['sentimiento'] = 'Neutral'
-                self.dataset = self.df
             
             # Simplificar sentimientos
             self._simplificar_sentimientos()
@@ -123,7 +121,6 @@ class SentimentAnalyzer:
         
         self.df['sentimiento_original'] = self.df['sentimiento']
         self.df['sentimiento'] = self.df['sentimiento'].map(mapeo_simplificado).fillna('Neutral')
-        self.dataset = self.df
         
     def clean_dataset(self):
         """Limpia el dataset"""
@@ -134,8 +131,6 @@ class SentimentAnalyzer:
         self.df = self.df.dropna(subset=['texto_comentario', 'sentimiento'])
         self.df['texto_comentario'] = self.df['texto_comentario'].astype(str).str.strip()
         self.df['sentimiento'] = self.df['sentimiento'].astype(str).str.strip().str.capitalize()
-        self.dataset = self.df
-        self.dataset_size = len(self.df)
     
     def clean_text(self, text: str) -> str:
         """Limpia el texto"""
@@ -146,15 +141,11 @@ class SentimentAnalyzer:
         text = re.sub(r'https?://\S+|www\.\S+', '', text)
         text = re.sub(r'@\w+', '', text)
         text = re.sub(r'#\w+', '', text)
-        text = re.sub(r'[^\w\sáéíóúñ]', ' ', text)
-        text = re.sub(r'\d+', '', text)
-        text = re.sub(r'\s+', ' ', text).strip()
+        text = re.sub(r'[^\\w\\sáéíóúñ]', ' ', text)
+        text = re.sub(r'\\d+', '', text)
+        text = re.sub(r'\\s+', ' ', text).strip()
         
         return text
-    
-    def preprocess_text(self, text: str) -> str:
-        """Preprocesa el texto (alias de clean_text)"""
-        return self.clean_text(text)
     
     def train_model(self):
         """Entrena el modelo"""
@@ -166,20 +157,16 @@ class SentimentAnalyzer:
             self.df['sentimiento_numerico'] = self.df['sentimiento'].map(self.sentiment_map)
             df_clean = self.df.dropna(subset=['sentimiento_numerico'])
             
-            logger.info(f"Preprocesamiento completado: {len(df_clean)} comentarios")
-            
             # TF-IDF
-            logger.info("🔧 Creando vectores TF-IDF...")
             self.vectorizer = TfidfVectorizer(
                 max_features=500,
                 min_df=2,
                 max_df=0.95,
-                stop_words=list(self.spanish_stopwords) if self.spanish_stopwords else None,
+                stop_words=list(self.spanish_stopwords),
                 ngram_range=(1, 2)
             )
             
             X_tfidf = self.vectorizer.fit_transform(df_clean['texto_limpio'])
-            logger.info(f"{X_tfidf.shape[1]} características creadas")
             
             # Características adicionales
             df_clean['longitud'] = df_clean['texto_limpio'].apply(len)
@@ -195,17 +182,12 @@ class SentimentAnalyzer:
                 X, y, test_size=0.2, random_state=42, stratify=y
             )
             
-            logger.info(f"Train: {X_train.shape}, Test: {X_test.shape}")
-            
             # Balancear con SMOTE
             if HAS_SMOTE:
-                logger.info("Aplicando SMOTE para balanceo...")
                 smote = SMOTE(random_state=42)
                 X_train, y_train = smote.fit_resample(X_train, y_train)
-                logger.info(f"Después de SMOTE - Train: {X_train.shape}")
             
             # Entrenar
-            logger.info("🔧 Entrenando modelo RandomForest...")
             self.model = RandomForestClassifier(
                 n_estimators=100,
                 max_depth=20,
@@ -217,18 +199,11 @@ class SentimentAnalyzer:
             # Evaluar
             y_pred = self.model.predict(X_test)
             accuracy = accuracy_score(y_test, y_pred)
-            report = classification_report(y_test, y_pred, target_names=['Negativo', 'Neutral', 'Positivo'])
-            
-            logger.info(f"✅ Modelo entrenado - Accuracy: {accuracy:.4f}")
-            logger.info(f"Reporte de clasificación:\n{report}")
             
             # Guardar
             os.makedirs(os.path.dirname(self.model_path), exist_ok=True)
             joblib.dump(self.model, self.model_path)
-            logger.info(f"Modelo guardado en: {self.model_path}")
-            
             joblib.dump(self.vectorizer, self.vectorizer_path)
-            logger.info(f"Vectorizador guardado en: {self.vectorizer_path}")
             
             self.model_metadata = {
                 'accuracy': float(accuracy),
@@ -240,30 +215,27 @@ class SentimentAnalyzer:
             }
             
             self.is_trained = True
-            logger.info("✅ Entrenamiento completado exitosamente")
+            logger.info(f"✅ Modelo entrenado - Accuracy: {accuracy:.4f}")
             return True
             
         except Exception as e:
-            logger.error(f"Error entrenando modelo: {e}", exc_info=True)
+            logger.error(f"Error entrenando modelo: {e}")
             return False
     
     def load_or_train_model(self):
         """Carga o entrena modelo"""
         try:
             if os.path.exists(self.model_path) and os.path.exists(self.vectorizer_path):
-                logger.info("Cargando modelo existente...")
                 self.model = joblib.load(self.model_path)
                 self.vectorizer = joblib.load(self.vectorizer_path)
                 self.is_trained = True
                 logger.info("✅ Modelo cargado exitosamente")
                 return True
             else:
-                logger.info("No se encontró modelo existente, entrenando nuevo...")
                 if self.df is not None and not self.df.empty:
-                    success = self.train_model()
-                    return success
+                    return self.train_model()
                 else:
-                    logger.warning("No hay dataset disponible para entrenar")
+                    logger.warning("No hay dataset para entrenar")
                     return False
         except Exception as e:
             logger.error(f"Error cargando/entrenando modelo: {e}")
@@ -272,76 +244,40 @@ class SentimentAnalyzer:
     # === MÉTODOS QUE LAS RUTAS ESPERAN ===
     
     def analyze_single(self, text: str) -> Dict[str, Any]:
-        """Analiza un comentario individual"""
-        return self.predict(text)
+        """Analiza un comentario individual - método que las rutas esperan"""
+        return self.predict(text)  # Usa el método predict existente
     
     def analyze_batch(self, texts: List[str]) -> List[Dict[str, Any]]:
-        """Analiza múltiples textos en lote"""
-        try:
-            if not self.model or not self.vectorizer:
-                logger.warning("Modelo no disponible, analizando individualmente...")
-                return [self.analyze_single(text) for text in texts]
-            
-            # Preprocesar todos los textos
-            processed_texts = [self.preprocess_text(text) for text in texts]
-            
-            # Vectorizar
-            X_tfidf = self.vectorizer.transform(processed_texts).toarray()
-            
-            # Características adicionales
-            lengths = np.array([[len(t), len(t.split())] for t in processed_texts])
-            
-            # Combinar
-            X = np.hstack([X_tfidf, lengths])
-            
-            # Predecir
-            predictions = self.model.predict(X)
-            probabilities = self.model.predict_proba(X) if hasattr(self.model, 'predict_proba') else None
-            
-            results = []
-            for i, text in enumerate(texts):
-                sentiment = self.reverse_sentiment_map.get(predictions[i], 'Neutral')
-                
-                result = {
-                    'comment': text,
-                    'sentimiento': sentiment,
-                    'confianza': float(probabilities[i].max()) if probabilities is not None else 0.5,
-                    'probabilities': {
-                        'negativo': float(probabilities[i][0]) if probabilities is not None else 0.33,
-                        'neutral': float(probabilities[i][1]) if probabilities is not None else 0.33,
-                        'positivo': float(probabilities[i][2]) if probabilities is not None else 0.33,
-                    },
-                    'timestamp': datetime.now().isoformat()
-                }
+        """Analiza múltiples comentarios - método que las rutas esperan"""
+        results = []
+        for text in texts:
+            try:
+                result = self.predict(text)
                 results.append(result)
-            
-            return results
-            
-        except Exception as e:
-            logger.error(f"Error en análisis por lote: {e}", exc_info=True)
-            return [self.analyze_single(text) for text in texts]
+            except Exception as e:
+                results.append({
+                    'comment': text,
+                    'sentiment': 'Error',
+                    'confidence': 0.0,
+                    'error': str(e)
+                })
+        return results
     
     def predict(self, text: str) -> Dict[str, Any]:
         """Predice el sentimiento de un texto"""
         try:
-            if not self.is_trained or self.model is None or self.vectorizer is None:
-                logger.warning("Modelo no entrenado, retornando valor por defecto")
+            if not self.is_trained or self.model is None:
                 return {
                     'comment': text,
-                    'sentimiento': 'Neutral',
-                    'confianza': 0.5,
+                    'sentimiento': 'No determinado',
+                    'confianza': 0.0,
+                    'error': 'Modelo no entrenado',
                     'probabilities': {
                         'negativo': 0.33,
                         'neutral': 0.33,
                         'positivo': 0.33
                     },
-                    'features': {
-                        'text_length': len(text),
-                        'word_count': len(text.split()),
-                        'emoji_score': 0,
-                        'pos_word_score': 0,
-                        'neg_word_score': 0
-                    },
+                    'features': {},
                     'timestamp': datetime.now().isoformat()
                 }
             
@@ -386,7 +322,7 @@ class SentimentAnalyzer:
             }
             
         except Exception as e:
-            logger.error(f"Error en predicción: {e}", exc_info=True)
+            logger.error(f"Error en predicción: {e}")
             return {
                 'comment': text,
                 'sentimiento': 'Error',
@@ -396,60 +332,27 @@ class SentimentAnalyzer:
             }
     
     def get_dataset_info(self) -> Dict[str, Any]:
-        """
-        ✅ MÉTODO CORREGIDO - Retorna info completa con percentages
-        """
+        """Obtiene información del dataset"""
         if self.df is None or self.df.empty:
-            return {
-                'error': 'No hay dataset cargado',
-                'total_comments': 0,
-                'distribution': {},
-                'percentages': {},  # ✅ ESTO DEBE ESTAR
-                'columns': []
-            }
+            return {'error': 'No hay dataset cargado'}
         
-        try:
-            # Obtener distribución de sentimientos
-            distribution = self.df['sentimiento'].value_counts().to_dict()
-            total = len(self.df)
-            
-            # Calcular porcentajes
-            percentages = {
-                sentiment: round((count / total) * 100, 2)
-                for sentiment, count in distribution.items()
-            }
-            
-            return {
-                'total_comments': int(total),
-                'distribution': distribution,
-                'percentages': percentages,  # ✅ ESTO DEBE ESTAR
-                'columns': list(self.df.columns)
-            }
-            
-        except Exception as e:
-            logger.error(f"Error en get_dataset_info: {e}")
-            return {
-                'error': str(e),
-                'total_comments': 0,
-                'distribution': {},
-                'percentages': {},  # ✅ ESTO DEBE ESTAR
-                'columns': []
-            }
+        return {
+            'total_comments': int(len(self.df)),
+            'distribution': self.df['sentimiento'].value_counts().to_dict(),
+            'columns': list(self.df.columns)
+        }
     
     def get_statistics(self) -> Dict[str, Any]:
         """Obtiene estadísticas - método que las rutas esperan"""
         return self.get_dataset_info()
     
     def save_model(self):
-        """Guarda el modelo"""
+        """Guarda el modelo - método que el shutdown espera"""
         if self.model and self.vectorizer:
-            try:
-                os.makedirs(os.path.dirname(self.model_path), exist_ok=True)
-                joblib.dump(self.model, self.model_path)
-                joblib.dump(self.vectorizer, self.vectorizer_path)
-                logger.info("Modelo guardado exitosamente")
-            except Exception as e:
-                logger.error(f"Error guardando modelo: {e}")
+            os.makedirs(os.path.dirname(self.model_path), exist_ok=True)
+            joblib.dump(self.model, self.model_path)
+            joblib.dump(self.vectorizer, self.vectorizer_path)
+            logger.info("Modelo guardado")
     
     def get_model_info(self) -> Dict[str, Any]:
         """Obtiene información del modelo"""
@@ -459,3 +362,10 @@ class SentimentAnalyzer:
             'has_model': self.model is not None,
             'has_vectorizer': self.vectorizer is not None
         }
+'''
+
+# Guardar el archivo corregido
+with open('app/services/sentiment_analyzer.py', 'w', encoding='utf-8') as f:
+    f.write(sentiment_analyzer_content)
+
+print("✅ sentiment_analyzer.py actualizado con los métodos correctos")

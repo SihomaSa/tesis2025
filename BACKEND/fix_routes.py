@@ -1,12 +1,17 @@
+import os
+
+print("=== CORRIGIENDO RUTAS DE ANÁLISIS ===")
+
+# Contenido corregido para analysis_routes.py
+analysis_routes_content = '''
 """
-RUTAS DE ANÁLISIS - API UNMSM - CORREGIDO Y FUNCIONAL
+RUTAS DE ANÁLISIS - API UNMSM - SIMPLIFICADO Y FUNCIONAL
 """
 
 from fastapi import APIRouter, HTTPException, Depends
-from typing import List, Optional, Dict, Any
+from typing import List
 import logging
 from datetime import datetime
-from pydantic import BaseModel
 from app.core.dependencies import get_sentiment_analyzer
 
 logger = logging.getLogger(__name__)
@@ -14,39 +19,30 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-# ==================== MODELOS PYDANTIC ====================
-
-class AnalysisRequest(BaseModel):
-    """Modelo para análisis individual"""
-    text: str
-
-
-class BatchAnalysisRequest(BaseModel):
-    """Modelo para análisis por lote"""
-    texts: List[str]
-
-
-# ==================== ENDPOINTS ====================
-
-@router.post("/single")
+@router.post(
+    "/single",
+    summary="Analizar comentario individual",
+    description="Analiza el sentimiento de un comentario individual"
+)
 async def analyze_single_comment(
-    request: AnalysisRequest,
+    text: str,
     include_details: bool = True,
+    include_suggestions: bool = False,
     analyzer = Depends(get_sentiment_analyzer)
-) -> Dict[str, Any]:
+):
     """
     Analiza un comentario individual y retorna el sentimiento detectado.
     """
     try:
-        logger.info(f"📝 Analizando: {request.text[:50]}...")
+        logger.info(f"📝 Analizando: {text[:50]}...")
         
         # Analizar usando el método analyze_single
-        result = analyzer.analyze_single(request.text)
+        result = analyzer.analyze_single(text)
         
         # Construir response
         response = {
             "success": "error" not in result and result.get('sentimiento') != 'Error',
-            "comment": result.get('comment', request.text),
+            "comment": result.get('comment', text),
             "sentiment": result.get('sentimiento', 'Error'),
             "confidence": result.get('confianza', 0.0),
             "confidence_level": "Alta" if result.get('confianza', 0) > 0.7 else 
@@ -56,11 +52,9 @@ async def analyze_single_comment(
                 "neutral": 0.0,
                 "positivo": 0.0
             }),
+            "features": result.get('features', {}),
             "timestamp": result.get('timestamp', datetime.now().isoformat())
         }
-        
-        if include_details and "features" in result:
-            response["features"] = result["features"]
         
         if "error" in result:
             response["error"] = result["error"]
@@ -73,7 +67,7 @@ async def analyze_single_comment(
         logger.error(f"❌ Error en análisis: {e}", exc_info=True)
         return {
             "success": False,
-            "comment": request.text,
+            "comment": text,
             "sentiment": "Error",
             "confidence": 0.0,
             "error": str(e),
@@ -81,23 +75,24 @@ async def analyze_single_comment(
         }
 
 
-@router.post("/batch")
+@router.post(
+    "/batch",
+    summary="Analizar múltiples comentarios"
+)
 async def analyze_batch_comments(
-    request: BatchAnalysisRequest,
+    texts: List[str],
+    batch_size: int = 100,
     include_details: bool = True,
     analyzer = Depends(get_sentiment_analyzer)
-) -> Dict[str, Any]:
+):
     """
     Analiza múltiples comentarios en un solo request.
     """
     try:
-        logger.info(f"📦 Analizando lote de {len(request.texts)} comentarios...")
+        logger.info(f"📦 Analizando lote de {len(texts)} comentarios...")
         
-        # Analizar cada comentario individualmente (ya que analyze_batch no existe)
-        results = []
-        for text in request.texts:
-            result = analyzer.analyze_single(text)
-            results.append(result)
+        # Analizar batch
+        results = analyzer.analyze_batch(texts)
         
         # Calcular estadísticas
         sentiment_counts = {"Positivo": 0, "Neutral": 0, "Negativo": 0, "Error": 0}
@@ -109,7 +104,7 @@ async def analyze_batch_comments(
             if "error" in result or result.get("sentimiento") == "Error":
                 sentiment_counts["Error"] += 1
                 processed_result = {
-                    "comment": request.texts[i] if i < len(request.texts) else "Unknown",
+                    "comment": texts[i] if i < len(texts) else "Unknown",
                     "sentiment": "Error",
                     "confidence": 0.0,
                     "error": result.get("error", "Unknown error")
@@ -121,14 +116,12 @@ async def analyze_batch_comments(
                 successful += 1
                 
                 processed_result = {
-                    "comment": result.get("comment", request.texts[i]),
+                    "comment": result.get("comment", texts[i]),
                     "sentiment": sentiment,
                     "confidence": result.get("confianza", 0.0),
                     "probabilities": result.get("probabilities", {}),
+                    "features": result.get("features", {}) if include_details else None
                 }
-                
-                if include_details and "features" in result:
-                    processed_result["features"] = result["features"]
             
             processed_results.append(processed_result)
         
@@ -138,16 +131,16 @@ async def analyze_batch_comments(
         response = {
             "results": processed_results,
             "summary": {
-                "total_analyzed": len(request.texts),
+                "total_analyzed": len(texts),
                 "successful_analysis": successful,
-                "failed_analysis": len(request.texts) - successful,
+                "failed_analysis": len(texts) - successful,
                 "avg_confidence": round(avg_confidence, 3),
-                "sentiment_distribution": {k: v for k, v in sentiment_counts.items() if v > 0}
+                "sentiment_distribution": sentiment_counts
             },
             "timestamp": datetime.now().isoformat()
         }
         
-        logger.info(f"✅ Batch completado: {successful}/{len(request.texts)} exitosos")
+        logger.info(f"✅ Batch completado: {successful}/{len(texts)} exitosos")
         
         return response
         
@@ -156,8 +149,8 @@ async def analyze_batch_comments(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/test")
-async def test_analysis(analyzer = Depends(get_sentiment_analyzer)) -> Dict[str, Any]:
+@router.get("/test", summary="Endpoint de prueba")
+async def test_analysis(analyzer=Depends(get_sentiment_analyzer)):
     """
     Endpoint de prueba con comentarios predefinidos.
     """
@@ -170,11 +163,7 @@ async def test_analysis(analyzer = Depends(get_sentiment_analyzer)) -> Dict[str,
     ]
     
     try:
-        # Analizar cada comentario
-        results = []
-        for comment in test_comments:
-            result = analyzer.analyze_single(comment)
-            results.append(result)
+        results = analyzer.analyze_batch(test_comments)
         
         return {
             "message": "Test ejecutado exitosamente",
@@ -192,13 +181,29 @@ async def test_analysis(analyzer = Depends(get_sentiment_analyzer)) -> Dict[str,
         }
 
 
-@router.post("/predict")
+@router.post(
+    "/predict",
+    summary="Predicción rápida"
+)
 async def predict_sentiment(
-    request: AnalysisRequest,
+    text: str,
     include_details: bool = True,
+    include_suggestions: bool = False,
     analyzer = Depends(get_sentiment_analyzer)
-) -> Dict[str, Any]:
+):
     """
     Predicción rápida de sentimiento (alias de /single).
     """
-    return await analyze_single_comment(request, include_details, analyzer)
+    return await analyze_single_comment(text, include_details, include_suggestions, analyzer)
+'''
+
+# Guardar el archivo de rutas corregido
+with open('app/routes/analysis_routes.py', 'w', encoding='utf-8') as f:
+    f.write(analysis_routes_content)
+
+print("✅ analysis_routes.py actualizado")
+
+print("\n✅ CORRECCIONES APLICADAS:")
+print("1. sentiment_analyzer.py ahora tiene analyze_single() y analyze_batch()")
+print("2. analysis_routes.py simplificado para usar los métodos correctos")
+print("3. Ambas partes ahora son compatibles")

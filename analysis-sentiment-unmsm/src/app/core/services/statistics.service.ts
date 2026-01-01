@@ -1,12 +1,11 @@
 /**
- * SERVICIO DE ESTADÍSTICAS - CORREGIDO
- * Consume las APIs reales del backend FastAPI
+ * SERVICIO DE ESTADÍSTICAS - VERSIÓN LIMPIA
  */
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, of, forkJoin } from 'rxjs';
-import { catchError, map, retry, shareReplay, tap } from 'rxjs/operators';
+import { catchError, map, retry, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 // ========== INTERFACES ==========
@@ -76,7 +75,7 @@ export class StatisticsService {
   private readonly API_URL = `${environment.backendUrl}/statistics`;
   private readonly CACHE_TIME = 5 * 60 * 1000; // 5 minutos
   
-  // Cache para evitar llamadas repetidas
+  // Cache
   private cache = new Map<string, { data: any; timestamp: number }>();
   
   constructor(private http: HttpClient) {
@@ -86,43 +85,32 @@ export class StatisticsService {
 
   // ========== MÉTODOS PRINCIPALES ==========
 
-  /**
-   * Obtiene estadísticas generales del dataset
-   */
   getStatistics(): Observable<StatisticsResponse> {
     console.log('📡 GET /statistics/');
     
-    return this.http.get<StatisticsResponse>(`${this.API_URL}/`)
-      .pipe(
-        retry(2),
-        tap(data => {
-          console.log('✅ Estadísticas recibidas:', data);
-          this.setCache('statistics', data);
-        }),
-        catchError(this.handleError('getStatistics'))
-      );
+    return this.http.get<StatisticsResponse>(`${this.API_URL}/`).pipe(
+      retry(2),
+      tap(data => {
+        console.log('✅ Estadísticas recibidas:', data);
+        this.setCache('statistics', data);
+      }),
+      catchError(this.handleError<StatisticsResponse>('getStatistics'))
+    );
   }
 
-  /**
-   * Obtiene análisis por temas/categorías
-   */
   getTopicAnalysis(): Observable<TopicAnalysis[]> {
     console.log('📡 GET /statistics/topics');
     
-    return this.http.get<TopicAnalysis[]>(`${this.API_URL}/topics`)
-      .pipe(
-        retry(2),
-        tap(data => {
-          console.log('✅ Temas recibidos:', data);
-          this.setCache('topics', data);
-        }),
-        catchError(this.handleError('getTopicAnalysis', []))
-      );
+    return this.http.get<TopicAnalysis[]>(`${this.API_URL}/topics`).pipe(
+      retry(2),
+      tap(data => {
+        console.log('✅ Temas recibidos:', data);
+        this.setCache('topics', data);
+      }),
+      catchError(this.handleError<TopicAnalysis[]>('getTopicAnalysis', []))
+    );
   }
 
-  /**
-   * Obtiene comentarios recientes
-   */
   getRecentComments(limit: number = 10): Observable<any> {
     console.log(`📡 GET /statistics/recent-comments?limit=${limit}`);
     
@@ -131,34 +119,45 @@ export class StatisticsService {
     }).pipe(
       retry(2),
       tap(data => console.log('✅ Comentarios recientes:', data)),
-      catchError(this.handleError('getRecentComments', { comments: [] }))
+      catchError(this.handleError<any>('getRecentComments', { comments: [] }))
     );
   }
 
-  /**
-   * Obtiene todos los datos del dashboard en una sola llamada
-   */
   getDashboardData(): Observable<DashboardData> {
     console.log('📡 GET /statistics/dashboard-data');
     
-    return this.http.get<DashboardData>(`${this.API_URL}/dashboard-data`)
-      .pipe(
-        retry(2),
-        tap(data => {
-          console.log('✅ Dashboard data recibido:', data);
-          this.setCache('dashboard', data);
-        }),
-        catchError((error) => {
-          console.warn('⚠️ Error en dashboard-data, usando llamadas individuales');
-          // Fallback: hacer llamadas individuales
-          return this.getDashboardDataFallback();
-        })
-      );
+    return this.http.get<DashboardData>(`${this.API_URL}/dashboard-data`).pipe(
+      retry(2),
+      tap(data => {
+        console.log('✅ Dashboard data recibido:', data);
+        this.setCache('dashboard', data);
+      }),
+      catchError(() => {
+        console.warn('⚠️ Error en dashboard-data, usando fallback');
+        return this.getDashboardDataFallback();
+      })
+    );
   }
 
-  /**
-   * Fallback: combina múltiples endpoints
-   */
+  checkBackendHealth(): Observable<boolean> {
+    console.log('🏥 Verificando salud del backend...');
+    
+    return this.http.get<any>(`${environment.backendUrl}/health`, {
+      headers: { 'X-Health-Check': 'true' }
+    }).pipe(
+      map(response => {
+        console.log('✅ Backend health:', response);
+        return response.status === 'healthy';
+      }),
+      catchError(() => {
+        console.error('❌ Backend no disponible');
+        return of(false);
+      })
+    );
+  }
+
+  // ========== PRIVADOS ==========
+
   private getDashboardDataFallback(): Observable<DashboardData> {
     console.log('🔄 Usando fallback para dashboard data');
     
@@ -171,7 +170,6 @@ export class StatisticsService {
         const distribution = stats.distribution;
         const total = stats.total_comments;
         
-        // Calcular porcentajes si no vienen
         const percentages = stats.percentages || {
           Positivo: (distribution.Positivo / total) * 100,
           Neutral: (distribution.Neutral / total) * 100,
@@ -196,48 +194,15 @@ export class StatisticsService {
     );
   }
 
-  /**
-   * Verifica el estado del backend
-   */
-  checkBackendHealth(): Observable<boolean> {
-    console.log('🏥 Verificando salud del backend...');
-    
-    return this.http.get<any>(`${environment.backendUrl}/health`, {
-      headers: { 'X-Health-Check': 'true' }
-    }).pipe(
-      map(response => {
-        console.log('✅ Backend health:', response);
-        return response.status === 'healthy';
-      }),
-      catchError((error) => {
-        console.error('❌ Backend no disponible:', error);
-        return of(false);
-      })
-    );
-  }
-
-  // ========== CACHE ==========
-
-  /**
-   * Guarda datos en cache
-   */
   private setCache(key: string, data: any): void {
-    this.cache.set(key, {
-      data,
-      timestamp: Date.now()
-    });
+    this.cache.set(key, { data, timestamp: Date.now() });
   }
 
-  /**
-   * Obtiene datos del cache si son válidos
-   */
   private getCache<T>(key: string): T | null {
     const cached = this.cache.get(key);
-    
     if (!cached) return null;
     
     const isExpired = Date.now() - cached.timestamp > this.CACHE_TIME;
-    
     if (isExpired) {
       this.cache.delete(key);
       return null;
@@ -247,19 +212,11 @@ export class StatisticsService {
     return cached.data as T;
   }
 
-  /**
-   * Limpia el cache
-   */
   clearCache(): void {
     console.log('🗑️ Limpiando cache');
     this.cache.clear();
   }
 
-  // ========== HELPERS ==========
-
-  /**
-   * Genera cambios mock para el dashboard
-   */
   private generateMockChanges(): any {
     return {
       total_comments: { change: '+12%', trend: 'up' },
@@ -269,9 +226,6 @@ export class StatisticsService {
     };
   }
 
-  /**
-   * Manejo de errores HTTP
-   */
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: HttpErrorResponse): Observable<T> => {
       console.error(`❌ Error en ${operation}:`, error);
@@ -279,14 +233,12 @@ export class StatisticsService {
       let errorMessage = 'Error desconocido';
       
       if (error.error instanceof ErrorEvent) {
-        // Error del lado del cliente
         errorMessage = `Error de red: ${error.error.message}`;
       } else {
-        // Error del lado del servidor
         errorMessage = `Error ${error.status}: ${error.message}`;
         
         if (error.status === 0) {
-          errorMessage = 'No se puede conectar con el backend. Verifica que esté corriendo.';
+          errorMessage = 'No se puede conectar con el backend';
         } else if (error.status === 404) {
           errorMessage = 'Endpoint no encontrado';
         } else if (error.status === 500) {
@@ -296,7 +248,6 @@ export class StatisticsService {
       
       console.error('📝 Mensaje de error:', errorMessage);
       
-      // Retornar valor por defecto si se proporciona
       if (result !== undefined) {
         return of(result as T);
       }

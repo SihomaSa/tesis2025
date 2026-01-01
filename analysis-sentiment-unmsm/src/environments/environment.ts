@@ -23,9 +23,11 @@ export const environment = {
     measurementId: "G-MCJV4MTVW8"
   },
   
-  apiUrl: 'http://localhost:8000',
+  // URLs del backend - CORREGIDAS
   backendUrl: 'http://localhost:8000/api',
-  mlApiUrl: 'https://...',
+  apiUrl: 'http://localhost:8000/api',  // Consistente con backendUrl
+  mlApiUrl: 'http://localhost:8000',
+  
   useLocalBackend: true,
   apiTimeout: 30000,
   defaultTimeout: 10000

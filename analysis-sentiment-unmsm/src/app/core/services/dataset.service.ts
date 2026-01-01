@@ -1,11 +1,7 @@
-/**
- * SERVICIO DE DATASET
- * Gestión de datasets y entrenamiento del modelo
- */
-
+// src/app/core/services/dataset.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, timeout, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { DatasetInfo, ModelTrainingResponse } from '../models/sentiment.models';
@@ -84,6 +80,6 @@ export class DatasetService {
   
   private handleError(error: any): Observable<never> {
     console.error('❌ Error en DatasetService:', error);
-    throw error;
+    return throwError(() => error); // ✅ CORREGIDO
   }
 }

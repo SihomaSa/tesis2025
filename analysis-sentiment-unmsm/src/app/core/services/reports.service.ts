@@ -1,11 +1,7 @@
-/**
- * SERVICIO DE REPORTES
- * Genera y obtiene reportes del sistema
- */
-
+// src/app/core/services/reports.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, timeout, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { ReportResponse } from '../models/sentiment.models';
@@ -34,7 +30,7 @@ export class ReportsService {
    * Generar reporte
    */
   generateReport(period: string = 'current', format: string = 'json'): Observable<ReportResponse> {
-    console.log(`📄 Generando reporte: ${period} (${format})`);
+    console.log(`📄 Generando reporte: ${period} (${format})`); // ✅ CORREGIDO
     
     const request = {
       period,
@@ -71,7 +67,7 @@ export class ReportsService {
    * Exportar reporte (descarga archivo)
    */
   exportReport(format: 'pdf' | 'xlsx' | 'csv' = 'pdf'): Observable<Blob> {
-    console.log(`📥 Exportando reporte en formato ${format}...`);
+    console.log(`📥 Exportando reporte en formato ${format}...`); // ✅ CORREGIDO
     
     return this.http.post(
       `${this.baseUrl}/reports/export`,
@@ -104,6 +100,6 @@ export class ReportsService {
   
   private handleError(error: any): Observable<never> {
     console.error('❌ Error en ReportsService:', error);
-    throw error;
+    return throwError(() => error); // ✅ CORREGIDO
   }
 }

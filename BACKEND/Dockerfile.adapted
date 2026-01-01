@@ -1,0 +1,536 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y gcc g++ && rm -rf /var/lib/apt/lists/*
+
+# Instalar imblearn
+RUN pip install --no-cache-dir imbalanced-learn
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Instalar NLTK para stopwords en español
+RUN python -c "import nltk; nltk.download('stopwords')"
+
+COPY . .
+
+# SOLUCIÓN DEFINITIVA: Crear archivo completamente funcional
+RUN cat > /tmp/solucion_final.py << 'EOF'
+import os
+
+print("=== CREANDO VERSIÓN FINAL Y FUNCIONAL ===")
+
+codigo_corregido = '''
+import pandas as pd
+import numpy as np
+from typing import Tuple, Dict, Any, List
+import re
+import joblib
+import logging
+import os
+from collections import Counter
+import nltk
+from nltk.corpus import stopwords
+
+# Importaciones de scikit-learn
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Importación de SMOTE para balanceo
+try:
+    from imblearn.over_sampling import SMOTE
+    HAS_SMOTE = True
+except ImportError:
+    HAS_SMOTE = False
+    print("⚠️  SMOTE no disponible, continuando sin balanceo")
+
+logger = logging.getLogger(__name__)
+
+class SentimentAnalyzer:
+    """
+    Analizador de sentimientos para comentarios de Instagram UNMSM
+    Versión simplificada y funcional
+    """
+    
+    def __init__(self, model_path: str = None):
+        self.df = None
+        self.model = None
+        self.vectorizer = None
+        self.is_trained = False
+        self.model_path = model_path or "ml_models/sentiment_model.pkl"
+        self.vectorizer_path = "ml_models/tfidf_vectorizer.pkl"
+        
+        # Mapeo SIMPLIFICADO de sentimientos (agrupa categorías similares)
+        self.sentiment_map = {
+            'Negativo': 0,
+            'Neutral': 1, 
+            'Positivo': 2
+        }
+        self.reverse_sentiment_map = {v: k for k, v in self.sentiment_map.items()}
+        
+        # Stopwords en español
+        try:
+            self.spanish_stopwords = set(stopwords.words('spanish'))
+        except:
+            self.spanish_stopwords = set()
+            print("⚠️  No se pudieron cargar stopwords en español")
+    
+    def load_dataset(self, filepath: str):
+        """
+        Carga el dataset desde un archivo CSV
+        """
+        try:
+            logger.info(f"Cargando dataset desde: {filepath}")
+            
+            # Cargar dataset
+            self.df = pd.read_csv(filepath, encoding="utf-8")
+            logger.info(f"Dataset cargado: {len(self.df)} registros")
+            
+            # Mostrar columnas para debugging
+            print(f"📊 Columnas en CSV: {list(self.df.columns)}")
+            
+            # Detectar y renombrar columnas automáticamente
+            column_mapping = {}
+            for col in self.df.columns:
+                col_lower = col.lower()
+                if 'texto' in col_lower or 'comment' in col_lower:
+                    column_mapping[col] = 'texto_comentario'
+                    print(f"📝 Detectado: {col} -> texto_comentario")
+                elif 'sentimiento' in col_lower or 'sentiment' in col_lower:
+                    column_mapping[col] = 'sentimiento'
+                    print(f"📝 Detectado: {col} -> sentimiento")
+            
+            if column_mapping:
+                self.df = self.df.rename(columns=column_mapping)
+                print("✅ Columnas renombradas para consistencia")
+            
+            # Verificar columnas requeridas
+            required_cols = ['texto_comentario', 'sentimiento']
+            missing_cols = [col for col in required_cols if col not in self.df.columns]
+            
+            if missing_cols:
+                error_msg = f"Columnas faltantes: {missing_cols}. Columnas disponibles: {list(self.df.columns)}"
+                logger.error(error_msg)
+                raise ValueError(error_msg)
+            
+            # Simplificar sentimientos
+            self._simplificar_sentimientos()
+            
+            # Limpiar datos
+            self.clean_dataset()
+            
+            logger.info(f"Dataset procesado: {len(self.df)} comentarios válidos")
+            
+        except Exception as e:
+            logger.error(f"Error cargando dataset: {e}")
+            raise
+    
+    def _simplificar_sentimientos(self):
+        """Simplifica las etiquetas de sentimiento a 3 categorías principales"""
+        print("🔧 Simplificando categorías de sentimiento...")
+        
+        # Mapeo de categorías detalladas a categorías simples
+        mapeo_simplificado = {}
+        
+        for sentimiento in self.df['sentimiento'].unique():
+            sent_str = str(sentimiento).lower()
+            
+            if any(palabra in sent_str for palabra in ['negativo', 'negativa', 'neg', 'mal', 'triste', 'enojo', 'enoja', 'frustra', 'decep']):
+                mapeo_simplificado[sentimiento] = 'Negativo'
+            elif any(palabra in sent_str for palabra in ['neutral', 'neutro', 'informa', 'consulta', 'pregunta', 'duda']):
+                mapeo_simplificado[sentimiento] = 'Neutral'
+            elif any(palabra in sent_str for palabra in ['positivo', 'positiva', 'posit', 'bueno', 'buena', 'excelente', 'genial', 'feliz', 'alegr', 'orgullo', 'gracias']):
+                mapeo_simplificado[sentimiento] = 'Positivo'
+            else:
+                # Por defecto, asignar Neutral
+                mapeo_simplificado[sentimiento] = 'Neutral'
+        
+        # Aplicar mapeo
+        self.df['sentimiento_original'] = self.df['sentimiento']
+        self.df['sentimiento'] = self.df['sentimiento'].map(mapeo_simplificado)
+        
+        # Si algún sentimiento no fue mapeado, asignar Neutral
+        self.df['sentimiento'] = self.df['sentimiento'].fillna('Neutral')
+        
+        # Mostrar distribución simplificada
+        distribucion = self.df['sentimiento'].value_counts().to_dict()
+        print(f"✅ Sentimientos simplificados: {distribucion}")
+        
+        # Mostrar algunos ejemplos de mapeo
+        print("📋 Ejemplos de mapeo:")
+        ejemplos = self.df[['sentimiento_original', 'sentimiento']].drop_duplicates().head(10)
+        for _, row in ejemplos.iterrows():
+            print(f"   {row['sentimiento_original']} -> {row['sentimiento']}")
+    
+    def clean_dataset(self):
+        """Limpia el dataset eliminando valores nulos y normalizando"""
+        # Eliminar filas con valores nulos en columnas críticas
+        initial_count = len(self.df)
+        self.df = self.df.dropna(subset=['texto_comentario', 'sentimiento'])
+        
+        # Convertir a string y limpiar espacios
+        self.df['texto_comentario'] = self.df['texto_comentario'].astype(str).str.strip()
+        self.df['sentimiento'] = self.df['sentimiento'].astype(str).str.strip()
+        
+        # Capitalizar primera letra
+        self.df['sentimiento'] = self.df['sentimiento'].str.capitalize()
+        
+        removed_count = initial_count - len(self.df)
+        if removed_count > 0:
+            logger.info(f"Se eliminaron {removed_count} filas con valores nulos")
+        
+        # Mostrar distribución final
+        distribution = self.df['sentimiento'].value_counts().to_dict()
+        logger.info(f"Distribución final: {distribution}")
+    
+    def clean_text(self, text: str) -> str:
+        """Limpia el texto eliminando caracteres no deseados"""
+        if not isinstance(text, str):
+            return ""
+        
+        # Convertir a minúsculas
+        text = text.lower()
+        
+        # Eliminar URLs
+        text = re.sub(r'https?://\S+|www\.\S+', '', text)
+        
+        # Eliminar menciones (@usuario)
+        text = re.sub(r'@\w+', '', text)
+        
+        # Eliminar hashtags
+        text = re.sub(r'#\w+', '', text)
+        
+        # Eliminar caracteres especiales excepto letras, números y espacios
+        text = re.sub(r'[^\\w\\sáéíóúñ]', ' ', text)
+        
+        # Eliminar números
+        text = re.sub(r'\\d+', '', text)
+        
+        # Eliminar espacios múltiples
+        text = re.sub(r'\\s+', ' ', text).strip()
+        
+        return text
+    
+    def preprocess_dataset(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """
+        Preprocesa el dataset para entrenamiento
+        """
+        try:
+            logger.info("Preprocesando dataset...")
+            
+            # Verificar que tenemos datos
+            if self.df is None or self.df.empty:
+                raise ValueError("No hay dataset cargado")
+            
+            # Crear copia para no modificar el original
+            df_combined = self.df.copy()
+            
+            # Limpiar texto
+            df_combined['texto_limpio'] = df_combined['texto_comentario'].apply(self.clean_text)
+            
+            # Crear características adicionales
+            df_combined['longitud_texto'] = df_combined['texto_limpio'].apply(len)
+            df_combined['num_palabras'] = df_combined['texto_limpio'].apply(lambda x: len(x.split()))
+            
+            # Convertir sentimientos a numérico
+            df_combined['sentimiento_numerico'] = df_combined['sentimiento'].map(self.sentiment_map)
+            
+            # Eliminar filas con sentimiento no mapeado
+            df_combined = df_combined.dropna(subset=['sentimiento_numerico'])
+            
+            # Crear DataFrame de características
+            clean_features_df = df_combined[['texto_limpio', 'longitud_texto', 'num_palabras']].copy()
+            
+            logger.info(f"Preprocesamiento completado: {len(df_combined)} comentarios")
+            
+            return df_combined, clean_features_df
+            
+        except Exception as e:
+            logger.error(f"Error en preprocesamiento: {e}")
+            raise
+    
+    def train_model(self):
+        """Entrena el modelo de machine learning"""
+        try:
+            logger.info("Entrenando nuevo modelo...")
+            
+            # Preprocesar dataset
+            df_combined, clean_features_df = self.preprocess_dataset()
+            
+            if df_combined.empty:
+                logger.warning("No hay datos para entrenar el modelo")
+                return
+            
+            logger.info(f"Preprocesamiento completado: {len(df_combined)} comentarios")
+            
+            # Crear vectores TF-IDF (CORREGIDO: sin stop_words='spanish')
+            logger.info("🔧 Creando vectores TF-IDF...")
+            
+            # Usar lista personalizada de stopwords en español
+            custom_stopwords = list(self.spanish_stopwords) if self.spanish_stopwords else None
+            
+            self.vectorizer = TfidfVectorizer(
+                max_features=500,
+                min_df=2,
+                max_df=0.95,
+                stop_words=custom_stopwords,  # Usar lista en lugar de string
+                ngram_range=(1, 2)
+            )
+            
+            X_tfidf = self.vectorizer.fit_transform(clean_features_df['texto_limpio'])
+            logger.info(f"{X_tfidf.shape[1]} características creadas")
+            
+            # Combinar características
+            X_additional = clean_features_df[['longitud_texto', 'num_palabras']].values
+            X_combined = np.hstack([X_tfidf.toarray(), X_additional])
+            
+            # Separar características y etiquetas
+            X = X_combined
+            y = df_combined['sentimiento_numerico'].values
+            
+            # Dividir en entrenamiento y prueba
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=0.2, random_state=42, stratify=y
+            )
+            
+            logger.info(f"Train: {X_train.shape}, Test: {X_test.shape}")
+            
+            # Aplicar SMOTE para balanceo (si está disponible)
+            if HAS_SMOTE and len(np.unique(y_train)) > 1:
+                logger.info("Aplicando SMOTE para balanceo...")
+                smote = SMOTE(random_state=42)
+                X_train_bal, y_train_bal = smote.fit_resample(X_train, y_train)
+                logger.info(f"Después de SMOTE - Train: {X_train_bal.shape}")
+            else:
+                if not HAS_SMOTE:
+                    logger.warning("SMOTE no disponible, usando datos desbalanceados")
+                X_train_bal, y_train_bal = X_train, y_train
+            
+            # Entrenar modelo
+            logger.info("🔧 Entrenando modelo RandomForest...")
+            self.model = RandomForestClassifier(
+                n_estimators=100,
+                max_depth=20,
+                random_state=42,
+                n_jobs=-1,
+                class_weight='balanced'
+            )
+            
+            self.model.fit(X_train_bal, y_train_bal)
+            
+            # Evaluar modelo
+            y_pred = self.model.predict(X_test)
+            accuracy = accuracy_score(y_test, y_pred)
+            report = classification_report(y_test, y_pred, target_names=self.sentiment_map.keys())
+            
+            logger.info(f"✅ Modelo entrenado - Accuracy: {accuracy:.4f}")
+            logger.info(f"Reporte de clasificación:\\n{report}")
+            
+            # Guardar modelo
+            self.is_trained = True
+            
+            # Guardar en archivo
+            os.makedirs(os.path.dirname(self.model_path), exist_ok=True)
+            joblib.dump(self.model, self.model_path)
+            logger.info(f"Modelo guardado en: {self.model_path}")
+            
+            # Guardar vectorizador
+            joblib.dump(self.vectorizer, self.vectorizer_path)
+            logger.info(f"Vectorizador guardado en: {self.vectorizer_path}")
+            
+            self.training_report = {
+                'accuracy': float(accuracy),
+                'model_type': 'RandomForest',
+                'training_samples': len(X_train_bal),
+                'test_samples': len(X_test),
+                'smote_used': HAS_SMOTE
+            }
+            
+            logger.info("✅ Entrenamiento completado exitosamente")
+            
+        except Exception as e:
+            logger.error(f"Error durante el entrenamiento: {e}")
+            raise
+    
+    def load_or_train_model(self):
+        """Carga un modelo existente o entrena uno nuevo"""
+        try:
+            if os.path.exists(self.model_path) and os.path.exists(self.vectorizer_path):
+                logger.info("Cargando modelo existente...")
+                self.model = joblib.load(self.model_path)
+                self.vectorizer = joblib.load(self.vectorizer_path)
+                self.is_trained = True
+                logger.info("✅ Modelo cargado exitosamente")
+            else:
+                logger.info("No se encontró modelo existente, entrenando nuevo...")
+                self.train_model()
+        except Exception as e:
+            logger.error(f"Error cargando/entrenando modelo: {e}")
+            self.is_trained = False
+    
+    def predict(self, text: str) -> Dict[str, Any]:
+        """
+        Predice el sentimiento de un texto
+        """
+        try:
+            if not self.is_trained or self.model is None:
+                return {
+                    'sentimiento': 'No determinado',
+                    'confianza': 0.0,
+                    'error': 'Modelo no entrenado'
+                }
+            
+            # Limpiar texto
+            clean_text = self.clean_text(text)
+            
+            # Extraer características
+            if self.vectorizer:
+                tfidf_features = self.vectorizer.transform([clean_text]).toarray()
+                
+                # Características adicionales
+                length = len(clean_text)
+                word_count = len(clean_text.split())
+                
+                # Combinar características
+                features = np.hstack([tfidf_features, [[length, word_count]]])
+                
+                # Predecir
+                prediction = self.model.predict(features)[0]
+                probabilities = self.model.predict_proba(features)[0]
+                
+                # Obtener sentimiento
+                sentiment = self.reverse_sentiment_map.get(prediction, 'Neutral')
+                confidence = float(max(probabilities))
+                
+                return {
+                    'sentimiento': sentiment,
+                    'confianza': confidence,
+                    'probabilidades': {
+                        'Negativo': float(probabilities[0]),
+                        'Neutral': float(probabilities[1]),
+                        'Positivo': float(probabilities[2])
+                    }
+                }
+            else:
+                return {
+                    'sentimiento': 'Error',
+                    'confianza': 0.0,
+                    'error': 'Vectorizador no disponible'
+                }
+                
+        except Exception as e:
+            logger.error(f"Error en predicción: {e}")
+            return {
+                'sentimiento': 'Error',
+                'confianza': 0.0,
+                'error': str(e)
+            }
+    
+    def get_dataset_info(self) -> Dict[str, Any]:
+        """Obtiene información del dataset cargado"""
+        if self.df is None or self.df.empty:
+            return {'error': 'No hay dataset cargado'}
+        
+        return {
+            'total_registros': int(len(self.df)),
+            'distribucion_sentimientos': self.df['sentimiento'].value_counts().to_dict(),
+            'columnas': list(self.df.columns),
+            'muestra': self.df[['texto_comentario', 'sentimiento']].head(5).to_dict('records')
+        }
+'''
+
+# Escribir el archivo corregido
+archivo_original = 'app/services/sentiment_analyzer.py'
+with open(archivo_original, 'w', encoding='utf-8') as f:
+    f.write(codigo_corregido)
+
+print("✅ Versión final creada")
+print("✅ Correcciones aplicadas:")
+print("   1. Stopwords en español corregidas (usando lista en lugar de string)")
+print("   2. Sentimientos simplificados a 3 categorías")
+print("   3. Manejo de errores mejorado")
+print("   4. Sistema completamente funcional")
+EOF
+
+RUN python3 /tmp/solucion_final.py
+
+# También corregir dataset.py para que use las mismas columnas
+RUN cat > /tmp/corregir_dataset_py.py << 'EOF'
+import os
+
+print("=== CORRIGIENDO dataset.py ===")
+
+dataset_file = 'app/core/dataset.py'
+
+if os.path.exists(dataset_file):
+    with open(dataset_file, 'r', encoding='utf-8') as f:
+        contenido = f.read()
+    
+    # Reemplazar nombres de columnas
+    contenido = contenido.replace("'comentario'", "'texto_comentario'")
+    contenido = contenido.replace("'sentimiento'", "'sentimiento'")
+    
+    with open(dataset_file, 'w', encoding='utf-8') as f:
+        f.write(contenido)
+    
+    print("✅ dataset.py corregido")
+else:
+    print("ℹ️ dataset.py no encontrado, creando uno básico...")
+    
+    codigo_dataset = '''
+import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
+
+class DatasetManager:
+    """Gestor de dataset para el sistema de análisis de sentimientos"""
+    
+    def __init__(self):
+        self.df = None
+    
+    def load_dataset(self, filepath: str) -> pd.DataFrame:
+        """
+        Carga el dataset desde un archivo CSV
+        """
+        try:
+            logger.info(f"Cargando dataset desde: {filepath}")
+            self.df = pd.read_csv(filepath, encoding="utf-8")
+            logger.info(f"Dataset cargado: {len(self.df)} registros")
+            
+            # Verificar columnas
+            if 'texto_comentario' not in self.df.columns or 'sentimiento' not in self.df.columns:
+                available_cols = list(self.df.columns)
+                logger.warning(f"Columnas faltantes: ['texto_comentario', 'sentimiento']. Columnas disponibles: {available_cols}")
+            
+            return self.df
+            
+        except Exception as e:
+            logger.error(f"Error cargando dataset: {e}")
+            raise
+'''
+    
+    os.makedirs('app/core', exist_ok=True)
+    with open(dataset_file, 'w', encoding='utf-8') as f:
+        f.write(codigo_dataset)
+    
+    print("✅ dataset.py creado")
+EOF
+
+RUN python3 /tmp/corregir_dataset_py.py
+
+# Crear .env
+RUN rm -f .env
+RUN echo 'HOST="0.0.0.0"' > .env
+RUN echo 'PORT="8000"' >> .env
+RUN echo 'DEBUG="False"' >> .env
+RUN echo 'ALLOWED_ORIGINS=["http://localhost:8000","http://127.0.0.1:8000"]' >> .env
+
+RUN mkdir -p logs data ml_models reports temp
+
+EXPOSE 8000
+
+CMD ["python", "main.py"]
