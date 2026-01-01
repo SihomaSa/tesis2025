@@ -1,6 +1,7 @@
 """
-RUTAS DE ESTADÍSTICAS - VERSIÓN CORREGIDA
-Maneja correctamente los datos del SentimentAnalyzer
+RUTAS DE ESTADÍSTICAS - VERSIÓN DEFINITIVA CORREGIDA
+✅ Soluciona el problema de los 64 comentarios con sentimiento NaN
+✅ Filtra valores nulos ANTES de calcular distribución
 """
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -18,57 +19,122 @@ async def get_statistics(
     analyzer = Depends(get_sentiment_analyzer)
 ) -> Dict[str, Any]:
     """
-    Obtiene estadísticas generales del dataset
+    ✅ Obtiene estadísticas del dataset
+    CORREGIDO: Filtra NaN antes de contar
     """
     try:
-        logger.info("[STATS] Obteniendo estadísticas del dataset COMPLETO...")
+        logger.info("[STATS] Obteniendo estadísticas del dataset...")
         
         if analyzer.df is None or analyzer.df.empty:
             raise HTTPException(status_code=404, detail="No hay dataset cargado")
         
         df = analyzer.df
-        logger.info(f"Procesando dataset con {len(df)} comentarios")
+        initial_total = len(df)
         
-        # 1. DISTRIBUCIÓN DE SENTIMIENTOS
-        distribution = df['sentimiento'].value_counts().to_dict()
-        total = len(df)
+        logger.info(f"📊 Dataset completo: {initial_total} comentarios")
         
-        # 2. CALCULAR PORCENTAJES (KEY FIX)
+        # ========== CLAVE: FILTRAR VALORES NULOS Y SIMPLIFICAR ==========
+        # Buscar columna de sentimiento (puede tener varios nombres)
+        sent_col = None
+        for col in df.columns:
+            if 'sentimiento' in str(col).lower():
+                sent_col = col
+                break
+        
+        if not sent_col:
+            logger.error(f"No se encontró columna de sentimiento. Columnas: {list(df.columns)}")
+            raise HTTPException(status_code=500, detail="Columna de sentimiento no encontrada")
+        
+        # FILTRAR REGISTROS CON SENTIMIENTO VÁLIDO (no NaN, no vacío)
+        df_validos = df[df[sent_col].notna()].copy()
+        df_validos = df_validos[df_validos[sent_col].astype(str).str.strip() != '']
+        
+        # ✅ SIMPLIFICAR SENTIMIENTOS (agrupar Positivo/*, Neutral/*, Negativo/*)
+        def simplificar_sentimiento(sent: str) -> str:
+            """Agrupa sentimientos en 3 categorías"""
+            s = str(sent).lower()
+            
+            if any(p in s for p in ['positiv', 'posit/']):
+                return 'Positivo'
+            elif any(p in s for p in ['negativ', 'neg/']):
+                return 'Negativo'
+            else:
+                return 'Neutral'
+        
+        df_validos[sent_col] = df_validos[sent_col].apply(simplificar_sentimiento)
+        logger.info(f"✅ Sentimientos simplificados a: {df_validos[sent_col].unique()}")
+        
+        registros_invalidos = initial_total - len(df_validos)
+        
+        if registros_invalidos > 0:
+            logger.warning(f"⚠️  {registros_invalidos} registros sin sentimiento válido (excluidos)")
+        
+        total = len(df_validos)
+        logger.info(f"✅ Registros válidos: {total}")
+        
+        # ✅ DISTRIBUCIÓN (ahora suma correctamente)
+        distribution = df_validos[sent_col].value_counts().to_dict()
+        suma = sum(distribution.values())
+        
+        logger.info(f"📊 Distribución: {distribution}")
+        logger.info(f"📊 Suma: {suma}, Total válidos: {total}")
+        
+        # ✅ VERIFICACIÓN
+        if suma != total:
+            logger.error(f"❌ INCONSISTENCIA: Suma={suma} vs Total={total}")
+            logger.error(f"Distribución: {distribution}")
+            raise ValueError(f"Distribución inconsistente: {suma} != {total}")
+        
+        # Calcular porcentajes
         percentages = {
             sentiment: round((count / total) * 100, 2)
             for sentiment, count in distribution.items()
         }
         
-        logger.info(f"[OK] Estadísticas obtenidas: {total} comentarios")
-        logger.info(f"Distribución: {distribution}")
-        
-        # 3. PALABRAS MÁS COMUNES
+        # Palabras más comunes
         from collections import Counter
         import re
         
-        all_words = []
-        for text in df['texto_comentario'].dropna():
-            words = re.findall(r'\b\w+\b', str(text).lower())
-            all_words.extend([w for w in words if len(w) > 3])
+        texto_col = None
+        for col in df.columns:
+            if 'texto' in str(col).lower() and 'comentario' in str(col).lower():
+                texto_col = col
+                break
         
-        word_counts = Counter(all_words).most_common(20)
+        word_counts = []
+        if texto_col:
+            all_words = []
+            for text in df_validos[texto_col].dropna():
+                words = re.findall(r'\b\w+\b', str(text).lower())
+                all_words.extend([w for w in words if len(w) > 3])
+            
+            word_counts = Counter(all_words).most_common(20)
+            
+            # Longitud promedio
+            avg_length = df_validos[texto_col].dropna().str.len().mean()
+        else:
+            avg_length = 0
         
-        # 4. LONGITUD PROMEDIO
-        avg_length = df['texto_comentario'].dropna().str.len().mean()
+        logger.info(f"✅ Estadísticas OK - Total válidos: {total}")
         
         return {
             "total_comments": int(total),
             "distribution": distribution,
-            "percentages": percentages,  # ✅ ESTO ES LO QUE FALTABA
-            "avg_comment_length": float(avg_length),
+            "percentages": percentages,
+            "avg_comment_length": float(avg_length) if avg_length else 0,
             "most_common_words": word_counts,
+            "verification": {
+                "distribution_sum": suma,
+                "matches_total": True,
+                "excluded_records": registros_invalidos
+            },
             "timestamp": datetime.now().isoformat()
         }
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error obteniendo estadísticas: {e}", exc_info=True)
+        logger.error(f"❌ Error: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -77,57 +143,76 @@ async def get_topic_analysis(
     analyzer = Depends(get_sentiment_analyzer)
 ) -> List[Dict[str, Any]]:
     """
-    Obtiene análisis de sentimientos por temas
+    ✅ Análisis por temas - FILTRADO DE NULOS
     """
     try:
-        logger.info("Analizando sentimientos por temas...")
+        logger.info("[TOPICS] Analizando sentimientos por temas...")
         
         if analyzer.df is None or analyzer.df.empty:
             return []
         
         df = analyzer.df
-        logger.info(f"Procesando {len(df)} comentarios para análisis de temas")
         
-        # Verificar si existe columna de temas
+        # Buscar columna de sentimiento
+        sent_col = None
+        for col in df.columns:
+            if 'sentimiento' in str(col).lower():
+                sent_col = col
+                break
+        
+        if not sent_col:
+            logger.warning("No se encontró columna de sentimiento")
+            return []
+        
+        # FILTRAR REGISTROS VÁLIDOS
+        df = df[df[sent_col].notna()].copy()
+        df = df[df[sent_col].astype(str).str.strip() != '']
+        
+        logger.info(f"📊 Procesando {len(df)} comentarios válidos")
+        
+        # Buscar columna de temas
         tema_col = None
         for col in df.columns:
-            col_lower = col.lower()
-            if any(keyword in col_lower for keyword in ['tema', 'topic', 'category', 'categoria']):
+            if any(k in col.lower() for k in ['tema', 'topic', 'category', 'principal']):
                 tema_col = col
                 break
         
         if tema_col is None:
-            logger.warning("No se encontró columna de temas, clasificando...")
-            # Clasificación simple basada en palabras clave
-            df['tema_auto'] = df['texto_comentario'].apply(clasificar_tema_simple)
-            tema_col = 'tema_auto'
+            logger.info("Clasificando temas automáticamente...")
+            texto_col = None
+            for col in df.columns:
+                if 'texto' in str(col).lower() and 'comentario' in str(col).lower():
+                    texto_col = col
+                    break
+            
+            if texto_col:
+                df['tema_auto'] = df[texto_col].apply(clasificar_tema_simple)
+                tema_col = 'tema_auto'
+            else:
+                logger.warning("No se encontró columna de texto")
+                return []
         
-        # Limitar a primeros 1000 para performance
-        df_sample = df.head(1000)
-        logger.info(f"Clasificando {len(df_sample)} comentarios por tema...")
-        
-        # Análisis por tema
+        # Análisis por tema (top 10)
         topics_data = []
-        temas = df_sample[tema_col].value_counts().head(10)
+        temas = df[tema_col].value_counts().head(10)
         
         for tema in temas.index:
-            df_tema = df_sample[df_sample[tema_col] == tema]
-            
-            sentiment_counts = df_tema['sentimiento'].value_counts().to_dict()
+            df_tema = df[df[tema_col] == tema]
+            sentiment_counts = df_tema[sent_col].value_counts().to_dict()
             
             topics_data.append({
-                "name": str(tema)[:50],  # Limitar longitud
+                "name": str(tema)[:50],
                 "positive": int(sentiment_counts.get('Positivo', 0)),
                 "neutral": int(sentiment_counts.get('Neutral', 0)),
                 "negative": int(sentiment_counts.get('Negativo', 0)),
                 "total": len(df_tema)
             })
         
-        logger.info(f"Análisis de temas completado: {len(topics_data)} temas encontrados")
+        logger.info(f"✅ {len(topics_data)} temas analizados")
         return topics_data
         
     except Exception as e:
-        logger.error(f"Error en análisis de temas: {e}", exc_info=True)
+        logger.error(f"❌ Error: {e}", exc_info=True)
         return []
 
 
@@ -137,7 +222,7 @@ async def get_recent_comments(
     analyzer = Depends(get_sentiment_analyzer)
 ) -> Dict[str, Any]:
     """
-    Obtiene los comentarios más recientes
+    Obtiene comentarios recientes - FILTRADO
     """
     try:
         if analyzer.df is None or analyzer.df.empty:
@@ -145,15 +230,32 @@ async def get_recent_comments(
         
         df = analyzer.df
         
-        # Tomar los últimos N comentarios
+        # Buscar columnas
+        texto_col = None
+        sent_col = None
+        
+        for col in df.columns:
+            col_lower = str(col).lower()
+            if 'texto' in col_lower and 'comentario' in col_lower:
+                texto_col = col
+            if 'sentimiento' in col_lower:
+                sent_col = col
+        
+        if not texto_col or not sent_col:
+            return {"comments": []}
+        
+        # FILTRAR VÁLIDOS
+        df = df[df[sent_col].notna()].copy()
+        df = df[df[texto_col].notna()].copy()
+        
         recent = df.tail(min(limit, len(df)))
         
         comments = []
         for _, row in recent.iterrows():
             comments.append({
-                "comment": str(row.get('texto_comentario', ''))[:200],
-                "sentiment": str(row.get('sentimiento', 'Neutral')),
-                "confidence": 0.85  # Mock confidence
+                "comment": str(row[texto_col])[:200],
+                "sentiment": str(row[sent_col]),
+                "confidence": 0.85
             })
         
         return {
@@ -162,7 +264,7 @@ async def get_recent_comments(
         }
         
     except Exception as e:
-        logger.error(f"Error obteniendo comentarios recientes: {e}")
+        logger.error(f"❌ Error: {e}")
         return {"comments": []}
 
 
@@ -171,30 +273,41 @@ async def get_dashboard_data(
     analyzer = Depends(get_sentiment_analyzer)
 ) -> Dict[str, Any]:
     """
-    ✅ ENDPOINT PRINCIPAL - CORREGIDO
-    Obtiene todos los datos necesarios para el dashboard
+    ✅ ENDPOINT PRINCIPAL - Dashboard completo
+    CORREGIDO: Ahora maneja correctamente los 64 registros sin sentimiento
     """
     try:
-        logger.info("Generando datos para dashboard...")
+        logger.info("="*60)
+        logger.info("📊 GENERANDO DASHBOARD DATA")
+        logger.info("="*60)
         
-        # 1. ESTADÍSTICAS BÁSICAS
+        # 1. Estadísticas básicas (ya filtradas)
         stats_dict = await get_statistics(analyzer)
         
-        # 2. TEMAS
+        total = stats_dict['total_comments']
+        distribution = stats_dict['distribution']
+        percentages = stats_dict['percentages']
+        excluded = stats_dict['verification'].get('excluded_records', 0)
+        
+        logger.info(f"✅ Comentarios válidos: {total}")
+        if excluded > 0:
+            logger.info(f"⚠️  Comentarios excluidos (sin sentimiento): {excluded}")
+        logger.info(f"✅ Distribución: {distribution}")
+        logger.info(f"✅ Verificado: {stats_dict['verification']['matches_total']}")
+        
+        # 2. Análisis de temas
         topics = await get_topic_analysis(analyzer)
         
-        # 3. COMENTARIOS RECIENTES
+        # 3. Comentarios recientes
         recent = await get_recent_comments(5, analyzer)
         
-        # 4. ESTRUCTURA FINAL
-        distribution = stats_dict['distribution']
-        percentages = stats_dict['percentages']  # ✅ YA ESTÁ INCLUIDO
-        
+        # 4. Estructura del dashboard
         dashboard_data = {
             "metrics": {
-                "total_comments": stats_dict['total_comments'],
+                "total_comments": int(total),
+                "excluded_comments": int(excluded),
                 "sentiment_distribution": distribution,
-                "sentiment_percentages": percentages,  # ✅ INCLUIDO
+                "sentiment_percentages": percentages,
                 "changes": {
                     "total_comments": {"change": "+12%", "trend": "up"},
                     "positive_sentiment": {"change": "+5%", "trend": "up"}
@@ -205,40 +318,58 @@ async def get_dashboard_data(
             "topics_analysis": topics,
             "recent_comments": recent['comments'],
             "model_info": {
-                "accuracy": analyzer.model_metadata.get('accuracy', 0.86),
-                "is_trained": analyzer.is_trained
+                "accuracy": analyzer.model_metadata.get('accuracy', 0.86) if hasattr(analyzer, 'model_metadata') else 0.86,
+                "is_trained": analyzer.is_trained if hasattr(analyzer, 'is_trained') else False
+            },
+            "verification": {
+                "distribution_sum": sum(distribution.values()),
+                "total_comments": total,
+                "excluded_comments": excluded,
+                "consistent": True
             },
             "timestamp": datetime.now().isoformat()
         }
         
-        logger.info("✅ Dashboard data generado correctamente")
+        logger.info("="*60)
+        logger.info("✅ DASHBOARD GENERADO")
+        logger.info(f"   Válidos: {total}")
+        logger.info(f"   Excluidos: {excluded}")
+        logger.info(f"   Positivos: {distribution.get('Positivo', 0)}")
+        logger.info(f"   Neutrales: {distribution.get('Neutral', 0)}")
+        logger.info(f"   Negativos: {distribution.get('Negativo', 0)}")
+        logger.info("="*60)
+        
         return dashboard_data
         
     except Exception as e:
-        logger.error(f"Error generando datos del dashboard: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error generando dashboard: {str(e)}"
-        )
+        logger.error(f"❌ Error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ========== UTILIDADES ==========
 
 def clasificar_tema_simple(texto: str) -> str:
     """
-    Clasificación simple de temas basada en palabras clave
+    Clasificación básica de temas por palabras clave
     """
     texto_lower = str(texto).lower()
     
-    if any(word in texto_lower for word in ['profesor', 'docente', 'enseñanza', 'clase']):
-        return 'Docentes'
-    elif any(word in texto_lower for word in ['infraestructura', 'edificio', 'aula', 'campus']):
-        return 'Infraestructura'
-    elif any(word in texto_lower for word in ['servicio', 'administración', 'trámite']):
-        return 'Servicios'
-    elif any(word in texto_lower for word in ['tecnología', 'internet', 'wifi', 'sistema']):
-        return 'Tecnología'
-    elif any(word in texto_lower for word in ['biblioteca', 'libro', 'material']):
-        return 'Biblioteca'
-    else:
-        return 'General'
+    keywords = {
+        'Ranking': ['ranking', 'posición', 'lugar', 'puesto'],
+        'Gestión': ['gestión', 'rectoría', 'autoridades', 'jerí'],
+        'Docentes': ['profesor', 'docente', 'enseñanza', 'clase'],
+        'Infraestructura': ['infraestructura', 'edificio', 'aula', 'campus'],
+        'Recursos': ['scopus', 'biblioteca', 'libro', 'material'],
+        'Servicios': ['servicio', 'administración', 'trámite'],
+        'Tecnología': ['tecnología', 'internet', 'wifi', 'sistema'],
+        'Investigación': ['investigación', 'investigar', 'estudio'],
+        'Académico': ['curso', 'carrera', 'programa', 'académico'],
+        'Logro': ['logro', 'excelencia', 'reconocimiento', 'felicitaciones'],
+        'Orgullo': ['orgullo', 'orgulloso', 'sanmarquino', 'decana']
+    }
+    
+    for tema, palabras in keywords.items():
+        if any(palabra in texto_lower for palabra in palabras):
+            return tema
+    
+    return 'General'

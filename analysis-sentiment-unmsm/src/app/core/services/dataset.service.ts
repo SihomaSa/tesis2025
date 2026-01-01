@@ -1,4 +1,3 @@
-// src/app/core/services/dataset.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -26,9 +25,6 @@ export class DatasetService {
     });
   }
   
-  /**
-   * Obtener información del dataset
-   */
   getDatasetInfo(): Observable<DatasetInfo> {
     console.log('📊 Obteniendo info del dataset...');
     
@@ -38,13 +34,13 @@ export class DatasetService {
     ).pipe(
       timeout(this.timeout),
       tap(response => console.log('✅ Dataset info:', response)),
-      catchError(this.handleError)
+      catchError(error => {
+        console.error('❌ Error:', error);
+        return throwError(() => error);
+      })
     );
   }
   
-  /**
-   * Cargar archivo CSV
-   */
   uploadDataset(file: File): Observable<any> {
     console.log('📤 Subiendo dataset:', file.name);
     
@@ -57,15 +53,15 @@ export class DatasetService {
     ).pipe(
       timeout(this.timeout * 3),
       tap(response => console.log('✅ Dataset cargado:', response)),
-      catchError(this.handleError)
+      catchError(error => {
+        console.error('❌ Error:', error);
+        return throwError(() => error);
+      })
     );
   }
   
-  /**
-   * Entrenar modelo
-   */
   trainModel(): Observable<ModelTrainingResponse> {
-    console.log('🤖 Iniciando entrenamiento del modelo...');
+    console.log('🤖 Iniciando entrenamiento...');
     
     return this.http.post<ModelTrainingResponse>(
       `${this.baseUrl}/dataset/train-model`,
@@ -74,12 +70,10 @@ export class DatasetService {
     ).pipe(
       timeout(this.timeout * 6),
       tap(response => console.log('✅ Modelo entrenado:', response)),
-      catchError(this.handleError)
+      catchError(error => {
+        console.error('❌ Error:', error);
+        return throwError(() => error);
+      })
     );
-  }
-  
-  private handleError(error: any): Observable<never> {
-    console.error('❌ Error en DatasetService:', error);
-    return throwError(() => error); // ✅ CORREGIDO
   }
 }

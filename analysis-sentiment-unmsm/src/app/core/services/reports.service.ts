@@ -1,4 +1,3 @@
-// src/app/core/services/reports.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -27,15 +26,12 @@ export class ReportsService {
   }
   
   /**
-   * Generar reporte
+   * ✅ CORREGIDO: Template literals
    */
   generateReport(period: string = 'current', format: string = 'json'): Observable<ReportResponse> {
-    console.log(`📄 Generando reporte: ${period} (${format})`); // ✅ CORREGIDO
+    console.log(`📄 Generando reporte: ${period} (${format})`);
     
-    const request = {
-      period,
-      format
-    };
+    const request = { period, format };
     
     return this.http.post<ReportResponse>(
       `${this.baseUrl}/reports/generate`,
@@ -44,13 +40,13 @@ export class ReportsService {
     ).pipe(
       timeout(this.timeout * 2),
       tap(response => console.log('✅ Reporte generado:', response.title)),
-      catchError(this.handleError)
+      catchError(error => {
+        console.error('❌ Error generando reporte:', error);
+        return throwError(() => error);
+      })
     );
   }
   
-  /**
-   * Obtener último reporte
-   */
   getLatestReport(): Observable<ReportResponse> {
     console.log('📄 Obteniendo último reporte...');
     
@@ -59,15 +55,18 @@ export class ReportsService {
       { headers: this.getHeaders() }
     ).pipe(
       timeout(this.timeout),
-      catchError(this.handleError)
+      catchError(error => {
+        console.error('❌ Error:', error);
+        return throwError(() => error);
+      })
     );
   }
   
   /**
-   * Exportar reporte (descarga archivo)
+   * ✅ CORREGIDO: Template literals
    */
   exportReport(format: 'pdf' | 'xlsx' | 'csv' = 'pdf'): Observable<Blob> {
-    console.log(`📥 Exportando reporte en formato ${format}...`); // ✅ CORREGIDO
+    console.log(`📥 Exportando reporte en formato ${format}...`);
     
     return this.http.post(
       `${this.baseUrl}/reports/export`,
@@ -79,13 +78,13 @@ export class ReportsService {
     ).pipe(
       timeout(this.timeout * 3),
       tap(() => console.log('✅ Reporte exportado')),
-      catchError(this.handleError)
+      catchError(error => {
+        console.error('❌ Error exportando:', error);
+        return throwError(() => error);
+      })
     );
   }
   
-  /**
-   * Descargar archivo blob
-   */
   downloadBlob(blob: Blob, filename: string): void {
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -96,10 +95,5 @@ export class ReportsService {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
     console.log('💾 Archivo descargado:', filename);
-  }
-  
-  private handleError(error: any): Observable<never> {
-    console.error('❌ Error en ReportsService:', error);
-    return throwError(() => error); // ✅ CORREGIDO
   }
 }

@@ -135,26 +135,128 @@ $transition: all 0.3s ease;
 }
 
 // Charts Grid
+// Estilos para los gráficos
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
   gap: 1.5rem;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
+  margin-top: 2rem;
 }
 
 .chart-card {
-  @include card;
+  background: white;
+  border-radius: 12px;
   padding: 1.5rem;
-  
-  .chart-title {
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: $text-primary;
-    margin: 0 0 1rem 0;
-  }
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.chart-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1.5rem;
+}
+
+// Gráfico de pastel
+.pie-chart-container {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.pie-chart {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.pie-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.pie-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.pie-total {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.pie-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.pie-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+// Gráfico de líneas
+.line-chart-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.line-chart {
+  width: 100%;
+  height: 200px;
+}
+
+.line-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+.bg-green {
+  background-color: #10b981;
+}
+
+.bg-yellow {
+  background-color: #f59e0b;
+}
+
+.bg-red {
+  background-color: #ef4444;
 }
 /* Radar Chart Styles */
 .chart-card {

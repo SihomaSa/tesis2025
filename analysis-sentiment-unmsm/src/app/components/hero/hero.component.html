@@ -24,73 +24,116 @@
     </div>
 
     <!-- Charts Grid -->
-    <div class="charts-grid">
-      
-      <!-- Sentiment Distribution -->
-      <div class="chart-card">
-        <h3 class="chart-title">Distribución de Sentimientos</h3>
-        <div class="pie-chart-container">
-          <div class="pie-chart">
-            <svg viewBox="0 0 200 200" class="pie-svg">
-              <circle cx="100" cy="100" r="80" fill="#10b981" 
-                      stroke-dasharray="315 628" 
-                      stroke-dashoffset="0" 
-                      transform="rotate(-90 100 100)"/>
-              <circle cx="100" cy="100" r="80" fill="#f59e0b" 
-                      stroke-dasharray="185 628" 
-                      stroke-dashoffset="-315" 
-                      transform="rotate(-90 100 100)"/>
-              <circle cx="100" cy="100" r="80" fill="#ef4444" 
-                      stroke-dasharray="128 628" 
-                      stroke-dashoffset="-500" 
-                      transform="rotate(-90 100 100)"/>
-            </svg>
-            <div class="pie-center">
-              <p class="pie-total">{{ getTotalComments() }}</p>
-              <p class="pie-label">Total</p>
-            </div>
-          </div>
-          <div class="pie-legend">
-            <div *ngFor="let item of sentimentData" class="legend-item">
-              <span class="legend-color" [style.background-color]="item.color"></span>
-              <span class="legend-text">{{ item.name }}: {{ item.value }} ({{ getSentimentPercentage(item.name) | number:'1.1-1' }}%)</span>
-            </div>
+  <div class="charts-grid">
+    
+    <!-- ✅ DISTRIBUCIÓN DE SENTIMIENTOS - CORREGIDA -->
+    <div class="chart-card">
+      <h3 class="chart-title">Distribución de Sentimientos</h3>
+      <div class="pie-chart-container">
+        
+        <!-- Gráfico de pastel -->
+        <div class="pie-chart">
+          <svg viewBox="0 0 200 200" class="pie-svg">
+            <!-- Círculos para cada sentimiento -->
+            <ng-container *ngFor="let sentiment of sentimentData; let i = index">
+              <circle 
+                cx="100" 
+                cy="100" 
+                r="80" 
+                [attr.fill]="sentiment.color"
+                [attr.stroke-dasharray]="getCircleDashArray(sentiment.value)"
+                [attr.stroke-dashoffset]="getCircleDashOffset(i)"
+                transform="rotate(-90 100 100)"/>
+            </ng-container>
+          </svg>
+          
+          <!-- Centro con total -->
+          <div class="pie-center">
+            <p class="pie-total">{{ getTotalComments() }}</p>
+            <p class="pie-label">Total</p>
           </div>
         </div>
-      </div>
-
-      <!-- Time Series -->
-      <div class="chart-card">
-        <h3 class="chart-title">Tendencia Temporal</h3>
-        <div class="line-chart-container">
-          <div class="line-chart">
-            <svg viewBox="0 0 400 200" class="line-svg">
-              <!-- Grid lines -->
-              <line *ngFor="let y of [0, 50, 100, 150, 200]" 
-                    x1="40" [attr.y1]="y" x2="380" [attr.y2]="y" 
-                    stroke="#e5e7eb" stroke-width="1"/>
-              
-              <!-- Lines for each sentiment -->
-              <polyline 
-                points="60,155 120,148 180,142 240,138 300,132 360,129"
-                fill="none" stroke="#10b981" stroke-width="3"/>
-              <polyline 
-                points="60,175 120,172 180,170 240,168 300,165 360,162"
-                fill="none" stroke="#f59e0b" stroke-width="3"/>
-              <polyline 
-                points="60,185 120,182 180,180 240,184 300,186 360,188"
-                fill="none" stroke="#ef4444" stroke-width="3"/>
-            </svg>
-          </div>
-          <div class="chart-legend">
-            <span class="legend-item"><span class="legend-dot bg-green"></span> Positivo</span>
-            <span class="legend-item"><span class="legend-dot bg-yellow"></span> Neutral</span>
-            <span class="legend-item"><span class="legend-dot bg-red"></span> Negativo</span>
+        
+        <!-- Leyenda -->
+        <div class="pie-legend">
+          <div *ngFor="let item of sentimentData" class="legend-item">
+            <span class="legend-color" [style.background-color]="item.color"></span>
+            <span class="legend-text">
+              {{ item.name }}: {{ item.value }} 
+              ({{ item.percentage || getSentimentPercentage(item.name) | number:'1.1-1' }}%)
+            </span>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- ✅ TENDENCIA TEMPORAL - CORREGIDA -->
+    <div class="chart-card">
+      <h3 class="chart-title">Tendencia Temporal</h3>
+      <div class="line-chart-container">
+        
+        <!-- Gráfico de líneas -->
+        <div class="line-chart">
+          <svg viewBox="0 0 400 200" class="line-svg">
+            
+            <!-- Grid lines -->
+            <line *ngFor="let y of [40, 80, 120, 160, 200]" 
+                  x1="40" [attr.y1]="y" 
+                  x2="380" [attr.y2]="y" 
+                  stroke="#e5e7eb" 
+                  stroke-width="1"/>
+            
+            <!-- Línea Positivo -->
+            <polyline 
+              *ngIf="trendData.length > 0"
+              [attr.points]="getTrendLinePoints('positivo')"
+              fill="none" 
+              stroke="#10b981" 
+              stroke-width="3"/>
+            
+            <!-- Línea Neutral -->
+            <polyline 
+              *ngIf="trendData.length > 0"
+              [attr.points]="getTrendLinePoints('neutral')"
+              fill="none" 
+              stroke="#f59e0b" 
+              stroke-width="3"/>
+            
+            <!-- Línea Negativo -->
+            <polyline 
+              *ngIf="trendData.length > 0"
+              [attr.points]="getTrendLinePoints('negativo')"
+              fill="none" 
+              stroke="#ef4444" 
+              stroke-width="3"/>
+            
+            <!-- Etiquetas de meses -->
+            <text *ngFor="let point of trendData; let i = index"
+                  [attr.x]="40 + (i * 340 / (trendData.length - 1))"
+                  y="195"
+                  text-anchor="middle"
+                  font-size="12"
+                  fill="#6b7280">
+              {{ point.month }}
+            </text>
+          </svg>
+        </div>
+        
+        <!-- Leyenda -->
+        <div class="chart-legend">
+          <span class="legend-item">
+            <span class="legend-dot bg-green"></span> Positivo
+          </span>
+          <span class="legend-item">
+            <span class="legend-dot bg-yellow"></span> Neutral
+          </span>
+          <span class="legend-item">
+            <span class="legend-dot bg-red"></span> Negativo
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
     <!-- Topics and Radar -->
     <div class="charts-grid">
       
