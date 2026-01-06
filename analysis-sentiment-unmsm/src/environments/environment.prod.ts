@@ -11,9 +11,9 @@ export const environment = {
     measurementId: "G-MCJV4MTVW8"
   },
 
-  backendUrl: '/api',
-  apiUrl: '/api',
-  mlApiUrl: '',
+  backendUrl: 'https://tesis2025-production.up.railway.app/api',
+  apiUrl: 'https://tesis2025-production.up.railway.app/api',
+  mlApiUrl: 'https://tesis2025-production.up.railway.app',
   
   useLocalBackend: false,
   apiTimeout: 30000,
