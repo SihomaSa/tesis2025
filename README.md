@@ -11,8 +11,8 @@ Sistema de análisis de sentimientos para evaluar la percepción de la comunidad
 ## 🌐 Demo en Vivo
 
 - **Frontend:** [https://analysis-sentiment-unmsm.web.app](https://analysis-sentiment-unmsm.web.app)
-- **Backend API:** [Tu URL de Railway aquí]
-- **Documentación API:** [Tu URL de Railway]/api/docs
+- **Backend API:** [https://tesis2025-production.up.railway.app]
+- **Documentación API:** [https://tesis2025-production.up.railway.app]/api/docs
 
 ## 📋 Tabla de Contenidos
 
@@ -428,9 +428,9 @@ Universidad Nacional Mayor de San Marcos
 
 ## 📞 Contacto
 
-- **Email:** [tu-email@unmsm.edu.pe]
+- **Email:** [sihomara.ochoa@unmsm.edu.pe]
 - **Universidad:** [UNMSM](https://www.unmsm.edu.pe)
-- **LinkedIn:** [Tu perfil]
+- **LinkedIn:** [https://www.linkedin.com/in/sihomara-sandy-ochoa-cisneros/]
 
 ---
 
