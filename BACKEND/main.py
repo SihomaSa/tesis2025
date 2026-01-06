@@ -156,11 +156,19 @@ app = FastAPI(
     docs_url="/api/docs",
     redoc_url="/api/redoc"
 )
-
+# CORS - IMPORTANTE
+origins = [
+    "https://analysis-sentiment-unmsm.web.app",
+    "https://analysis-sentiment-unmsm.firebaseapp.com",
+    "http://localhost:4200",
+    "http://localhost",
+]
+if os.getenv("ALLOWED_ORIGINS"):
+    origins.extend(os.getenv("ALLOWED_ORIGINS").split(","))
 # Configurar CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

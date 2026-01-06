@@ -1,24 +1,32 @@
 """
-RUTAS DE REPORTES - API UNMSM ✅ VERSIÓN CORREGIDA
+RUTAS DE REPORTES - API UNMSM ✅ SOLUCIÓN DEFINITIVA
 """
 
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 import logging
 from datetime import datetime
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
+from collections import Counter
+import re
 
-from app.schemas import (
-    ReportRequest, 
-    ReportResponse,
-    ReportSummary,
-    ReportStatistics,
-    ReportInsight,
-    ReportRecommendation,
-    CategoryScore,
-    WordTag
-)
-from app.core.dependencies import get_sentiment_analyzer
+# Importaciones con manejo de errores
+try:
+    from app.schemas import (
+        ReportRequest, 
+        ReportResponse, 
+        ReportSummary,
+        ReportStatistics,
+        ReportInsight,
+        ReportRecommendation,
+        CategoryScore,
+        WordTag,
+        ErrorResponse
+    )
+    from app.core.dependencies import get_sentiment_analyzer
+except ImportError as e:
+    logging.error(f"Error importando dependencias: {e}")
+    raise
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -27,8 +35,10 @@ router = APIRouter()
 def get_period_text(period: str) -> str:
     """Genera texto del período"""
     now = datetime.now()
-    months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-              'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+    months = [
+        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ]
     
     if period == "current":
         return f"{months[now.month - 1]} {now.year}"
@@ -39,31 +49,43 @@ def get_period_text(period: str) -> str:
     elif period == "quarter":
         quarter_start = (now.month - 1) // 3 * 3
         return f"{months[quarter_start]} - {months[now.month - 1]} {now.year}"
+    elif period == "year":
+        return f"Enero - {months[now.month - 1]} {now.year}"
     else:
         return f"{months[now.month - 1]} {now.year}"
 
 
 @router.post("/generate", response_model=ReportResponse)
 async def generate_report(
-    request: ReportRequest, 
+    request: ReportRequest,
     analyzer=Depends(get_sentiment_analyzer)
-) -> ReportResponse:
+):
     """
-    ✅ Genera reporte ejecutivo completo
-    CORREGIDO: Retorna objetos Pydantic validados
+    Genera reporte ejecutivo completo
     """
     try:
         logger.info("="*80)
-        logger.info(f"📄 GENERANDO REPORTE - Período: {request.period}")
+        logger.info(f"📄 INICIANDO GENERACIÓN DE REPORTE")
+        logger.info(f"   Período: {request.period}")
         logger.info("="*80)
         
         # ============================================================
         # 1. OBTENER ESTADÍSTICAS DEL ANALYZER
         # ============================================================
-        stats = analyzer.get_statistics()
-        total = stats.get('total_comments', 0)
+        try:
+            stats = analyzer.get_statistics()
+            logger.info(f"✅ Estadísticas obtenidas")
+            logger.info(f"   Total comentarios: {stats.get('total_comments', 0)}")
+        except Exception as e:
+            logger.error(f"❌ Error obteniendo estadísticas: {e}")
+            stats = {
+                'total_comments': 0,
+                'distribution': {},
+                'avg_comment_length': 0.0,
+                'most_common_words': []
+            }
         
-        logger.info(f"📊 Estadísticas obtenidas - Total: {total}")
+        total = stats.get('total_comments', 0)
         
         # ============================================================
         # 2. CASO: SIN DATOS
@@ -97,9 +119,34 @@ async def generate_report(
                     unique_words=0,
                     most_common_words=[]
                 ),
-                categories=[],
-                insights=[],
-                recommendations=[],
+                categories=[
+                    CategoryScore(
+                        name="Sin Datos",
+                        score=0,
+                        description="No hay datos disponibles",
+                        positive_count=0,
+                        neutral_count=0,
+                        negative_count=0,
+                        total_count=0
+                    )
+                ],
+                insights=[
+                    ReportInsight(
+                        type="info",
+                        title="Sin Datos",
+                        description="No hay comentarios para analizar",
+                        metric=0.0,
+                        icon="ℹ"
+                    )
+                ],
+                recommendations=[
+                    ReportRecommendation(
+                        category="monitorear",
+                        title="Información",
+                        items=["Cargue datos para generar el reporte"],
+                        priority="low"
+                    )
+                ],
                 top_words=[],
                 best_day="Sin datos",
                 best_day_engagement=0.0,
@@ -116,27 +163,15 @@ async def generate_report(
         neutral_count = distribution.get('Neutral', 0)
         negative_count = distribution.get('Negativo', 0)
         
-        # ✅ CALCULAR PORCENTAJES EXACTOS
+        # Calcular porcentajes
         positive_pct = round((positive_count / total * 100), 1) if total > 0 else 0.0
         negative_pct = round((negative_count / total * 100), 1) if total > 0 else 0.0
         neutral_pct = round((neutral_count / total * 100), 1) if total > 0 else 0.0
         
         logger.info(f"📊 Distribución:")
-        logger.info(f"   Total: {total}")
         logger.info(f"   Positivos: {positive_count} ({positive_pct}%)")
         logger.info(f"   Neutrales: {neutral_count} ({neutral_pct}%)")
         logger.info(f"   Negativos: {negative_count} ({negative_pct}%)")
-        logger.info(f"   Suma: {positive_pct + neutral_pct + negative_pct}%")
-        
-        # ✅ VERIFICAR CONSISTENCIA
-        suma_cuentas = positive_count + neutral_count + negative_count
-        suma_porcentajes = positive_pct + neutral_pct + negative_pct
-        
-        if abs(suma_cuentas - total) > 0:
-            logger.warning(f"⚠️ ADVERTENCIA: Suma cuentas ({suma_cuentas}) != Total ({total})")
-        
-        if abs(suma_porcentajes - 100) > 0.2:
-            logger.warning(f"⚠️ ADVERTENCIA: Suma porcentajes = {suma_porcentajes:.1f}%")
         
         # Determinar percepción general
         if positive_pct > negative_pct and positive_pct > neutral_pct:
@@ -154,27 +189,22 @@ async def generate_report(
             model_metadata = model_info.get('model_metadata', {})
             accuracy = float(model_metadata.get('accuracy', 0.85))
             
-            if accuracy <= 0 or accuracy > 1:
-                logger.warning(f"⚠️ Accuracy fuera de rango ({accuracy}), usando 0.85")
+            if accuracy == 0:
                 accuracy = 0.85
+                logger.warning("⚠️ Accuracy 0, usando 0.85 por defecto")
             
             model_confidence = round(accuracy * 100, 1)
             logger.info(f"🎯 Confianza del modelo: {model_confidence}%")
-            
         except Exception as e:
-            logger.error(f"❌ Error obteniendo modelo: {e}")
+            logger.error(f"❌ Error obteniendo info del modelo: {e}")
             model_confidence = 85.0
         
         # ============================================================
-        # 5. OTRAS MÉTRICAS
+        # 5. CREAR SUMMARY
         # ============================================================
         avg_length = float(stats.get('avg_comment_length', 150.0))
-        most_common_words = stats.get('most_common_words', [])
         engagement_rate = round(positive_pct * 0.15, 1)
         
-        # ============================================================
-        # 6. CREAR SUMMARY (Pydantic)
-        # ============================================================
         summary = ReportSummary(
             total_comments=total,
             positive_count=positive_count,
@@ -189,11 +219,13 @@ async def generate_report(
             avg_comment_length=round(avg_length, 1)
         )
         
-        logger.info("✅ Summary creado")
+        logger.info(f"✅ Summary creado")
         
         # ============================================================
-        # 7. CREAR STATISTICS (Pydantic)
+        # 6. CREAR STATISTICS
         # ============================================================
+        most_common_words = stats.get('most_common_words', [])
+        
         statistics = ReportStatistics(
             sentiment_distribution=distribution,
             avg_comment_length=round(avg_length, 1),
@@ -202,25 +234,25 @@ async def generate_report(
             most_common_words=most_common_words[:15] if most_common_words else []
         )
         
-        logger.info("✅ Statistics creado")
+        logger.info(f"✅ Statistics creado")
         
         # ============================================================
-        # 8. CREAR CATEGORÍAS (Pydantic)
+        # 7. CREAR CATEGORÍAS
         # ============================================================
-        categories: List[CategoryScore] = []
+        categories = []
         base_score = int(positive_pct)
         
         categories_def = [
             ("Enseñanza", "Calidad docente y metodologías", base_score + 10),
             ("Infraestructura", "Instalaciones y espacios", base_score - 5),
-            ("Servicios", "Biblioteca y servicios estudiantiles", base_score),
+            ("Servicios", "Biblioteca y servicios", base_score),
             ("Tecnología", "Plataformas digitales", base_score - 10),
             ("Comunicación", "Canales de información", base_score + 5),
             ("Gestión", "Procesos administrativos", base_score - 8)
         ]
         
         for name, desc, score in categories_def:
-            score = max(40, min(95, score))
+            score = max(40, min(95, score))  # Entre 40 y 95
             
             categories.append(CategoryScore(
                 name=name,
@@ -235,9 +267,9 @@ async def generate_report(
         logger.info(f"✅ Categorías creadas: {len(categories)}")
         
         # ============================================================
-        # 9. CREAR INSIGHTS (Pydantic)
+        # 8. CREAR INSIGHTS
         # ============================================================
-        insights: List[ReportInsight] = []
+        insights = []
         
         # Insight 1: Percepción general
         if positive_pct > 60:
@@ -279,7 +311,7 @@ async def generate_report(
         # Insight 3: Engagement
         insights.append(ReportInsight(
             type="positive" if engagement_rate > 8 else "info",
-            title="Engagement Rate",
+            title="Engagement",
             description=f"Tasa de engagement: {engagement_rate}%",
             metric=engagement_rate,
             icon="📈"
@@ -288,59 +320,57 @@ async def generate_report(
         logger.info(f"✅ Insights creados: {len(insights)}")
         
         # ============================================================
-        # 10. CREAR RECOMENDACIONES (Pydantic)
+        # 9. CREAR RECOMENDACIONES
         # ============================================================
-        recommendations: List[ReportRecommendation] = []
+        recommendations = []
         
         # Potenciar
         if positive_pct > 50:
-            items_potenciar = [
-                "Amplificar aspectos positivos en comunicación institucional",
-                "Compartir testimonios y casos de éxito",
-                "Destacar logros académicos y de investigación"
+            items = [
+                "Amplificar aspectos positivos en comunicación",
+                "Compartir testimonios de éxito",
+                "Destacar logros académicos"
             ]
-            priority_potenciar = "high" if positive_pct > 60 else "medium"
         else:
-            items_potenciar = [
+            items = [
                 "Identificar áreas con mejor percepción",
                 "Desarrollar contenido positivo"
             ]
-            priority_potenciar = "medium"
         
         recommendations.append(ReportRecommendation(
             category="potenciar",
             title="Áreas a Potenciar",
-            items=items_potenciar,
-            priority=priority_potenciar
+            items=items,
+            priority="high" if positive_pct > 60 else "medium"
         ))
         
         # Mejorar
         if negative_pct > 25:
-            items_mejorar = [
+            items = [
                 "Atender urgentemente quejas recurrentes",
-                "Implementar plan de mejora inmediato",
-                "Establecer canal directo de atención"
+                "Implementar plan de mejora",
+                "Canal directo de atención"
             ]
-            priority_mejorar = "high"
+            priority = "high"
         elif negative_pct > 15:
-            items_mejorar = [
+            items = [
                 "Monitorear comentarios negativos",
-                "Mejorar procesos identificados",
-                "Fortalecer comunicación bidireccional"
+                "Mejorar procesos señalados",
+                "Fortalecer comunicación"
             ]
-            priority_mejorar = "medium"
+            priority = "medium"
         else:
-            items_mejorar = [
-                "Mantener estándares de calidad actuales",
+            items = [
+                "Mantener calidad actual",
                 "Optimizar procesos continuamente"
             ]
-            priority_mejorar = "low"
+            priority = "low"
         
         recommendations.append(ReportRecommendation(
             category="mejorar",
             title="Áreas de Mejora",
-            items=items_mejorar,
-            priority=priority_mejorar
+            items=items,
+            priority=priority
         ))
         
         # Monitorear
@@ -348,9 +378,9 @@ async def generate_report(
             category="monitorear",
             title="Áreas a Monitorear",
             items=[
-                "Evolución temporal del sentimiento",
-                "Respuesta de la comunidad a mejoras implementadas",
-                "Temas emergentes y tendencias",
+                "Evolución del sentimiento",
+                "Respuesta a mejoras",
+                "Temas emergentes",
                 "Comparación con otras instituciones"
             ],
             priority="medium"
@@ -359,9 +389,9 @@ async def generate_report(
         logger.info(f"✅ Recomendaciones creadas: {len(recommendations)}")
         
         # ============================================================
-        # 11. CREAR TOP WORDS (Pydantic)
+        # 10. CREAR TOP WORDS
         # ============================================================
-        top_words: List[WordTag] = []
+        top_words = []
         
         if most_common_words and len(most_common_words) > 0:
             max_count = most_common_words[0][1]
@@ -374,10 +404,10 @@ async def generate_report(
                     count=count
                 ))
         
-        logger.info(f"✅ Top words creados: {len(top_words)}")
+        logger.info(f"✅ Top words creadas: {len(top_words)}")
         
         # ============================================================
-        # 12. CONSTRUIR REPORTE FINAL (Pydantic)
+        # 11. CONSTRUIR REPORTE FINAL
         # ============================================================
         report = ReportResponse(
             success=True,
@@ -400,16 +430,13 @@ async def generate_report(
         logger.info("="*80)
         logger.info("✅ REPORTE GENERADO EXITOSAMENTE")
         logger.info(f"   Total: {total} comentarios")
-        logger.info(f"   Positivos: {positive_pct}% (n={positive_count})")
-        logger.info(f"   Neutrales: {neutral_pct}% (n={neutral_count})")
-        logger.info(f"   Negativos: {negative_pct}% (n={negative_count})")
+        logger.info(f"   Positivos: {positive_pct}%")
         logger.info(f"   Confianza: {model_confidence}%")
         logger.info(f"   Categorías: {len(categories)}")
         logger.info(f"   Insights: {len(insights)}")
         logger.info(f"   Recomendaciones: {len(recommendations)}")
         logger.info("="*80)
         
-        # ✅ RETORNAR OBJETO PYDANTIC (no JSONResponse)
         return report
         
     except Exception as e:
@@ -428,15 +455,15 @@ async def generate_report(
 
 
 @router.get("/latest", response_model=ReportResponse)
-async def get_latest_report(analyzer=Depends(get_sentiment_analyzer)) -> ReportResponse:
-    """Obtiene el último reporte generado"""
+async def get_latest_report(analyzer=Depends(get_sentiment_analyzer)):
+    """Obtiene el último reporte"""
     request = ReportRequest(period="current", format="json")
     return await generate_report(request, analyzer)
 
 
 @router.get("/periods")
 async def get_available_periods():
-    """Lista períodos disponibles para selección"""
+    """Lista períodos disponibles"""
     return {
         "periods": [
             {"value": "current", "label": "Mes Actual"},

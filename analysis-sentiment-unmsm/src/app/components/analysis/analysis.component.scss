@@ -1,4 +1,30 @@
-// Estilos adicionales para analysis.component.scss
+.analysis-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.chart-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e5e7eb;
+}
 
 // Banner de error
 .error-banner {
@@ -41,6 +67,120 @@
   }
 }
 
+// Formulario
+.analysis-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+  }
+  
+  &:disabled {
+    background: #f3f4f6;
+    cursor: not-allowed;
+  }
+}
+
+// Botones
+.btn-primary,
+.btn-secondary,
+.btn-success {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+  width: 100%;
+  
+  &:hover:not(:disabled) {
+    background: #2563eb;
+  }
+}
+
+.btn-secondary {
+  background: #6b7280;
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background: #4b5563;
+  }
+}
+
+.btn-success {
+  background: #10b981;
+  color: white;
+  
+  &:hover:not(:disabled) {
+    background: #059669;
+  }
+}
+
+.btn-delete {
+  padding: 6px 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #dc2626;
+  }
+}
+
 // Spinner de carga
 .loading-spinner {
   display: flex;
@@ -58,37 +198,203 @@
   }
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+// Resultados del análisis
+.analysis-result {
+  animation: fadeIn 0.5s ease-out;
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.result-main {
+  margin-bottom: 24px;
 }
 
-// Botón deshabilitado
-.btn-primary:disabled,
-.btn-secondary:disabled,
-.btn-success:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.result-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.result-sentiment {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   
-  &:hover {
-    transform: none;
-    box-shadow: none;
+  &.positive {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  
+  &.neutral {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  
+  &.negative {
+    background: #fee2e2;
+    color: #991b1b;
   }
 }
 
-// Header del historial
+.sentiment-icon {
+  font-size: 18px;
+}
+
+// Barra de confianza
+.confidence-bar {
+  margin-top: 16px;
+}
+
+.confidence-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.confidence-value {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.progress-bar {
+  height: 24px;
+  background: #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  
+  &.small {
+    height: 16px;
+    border-radius: 8px;
+  }
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #2563eb);
+  transition: width 0.6s ease;
+  border-radius: 12px;
+  
+  &.positive {
+    background: linear-gradient(90deg, #10b981, #059669);
+  }
+  
+  &.neutral {
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+  }
+  
+  &.negative {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+  }
+}
+
+// Probabilidades
+.probabilities {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.probabilities-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+}
+
+.probability-item {
+  margin-bottom: 16px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.probability-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.probability-label {
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  
+  &.positive {
+    color: #065f46;
+  }
+  
+  &.neutral {
+    color: #92400e;
+  }
+  
+  &.negative {
+    color: #991b1b;
+  }
+}
+
+.probability-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+// Metadatos
+.result-metadata {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.metadata-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metadata-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metadata-value {
+  font-size: 14px;
+  color: #1f2937;
+  margin: 0;
+}
+
+// Acciones
+.analysis-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+// Historial
 .history-header {
   display: flex;
   justify-content: space-between;
@@ -113,15 +419,103 @@
   }
 }
 
-// Estados de carga en el textarea
-.form-textarea:disabled {
-  background: #f3f4f6;
-  cursor: not-allowed;
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-// Animación de entrada para resultados
-.analysis-result {
-  animation: fadeIn 0.5s ease-out;
+.history-item {
+  padding: 16px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    transform: translateX(4px);
+  }
+}
+
+.history-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.history-number {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.history-date {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.history-sentiment {
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  
+  &.positive {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  
+  &.neutral {
+    background: #fef3c7;
+    color: #92400e;
+  }
+  
+  &.negative {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+}
+
+.history-comment {
+  font-size: 14px;
+  color: #374151;
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+}
+
+.history-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-confidence {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+// Animaciones
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
@@ -137,12 +531,38 @@
 
 // Responsive
 @media (max-width: 768px) {
+  .analysis-container {
+    padding: 12px;
+  }
+  
+  .chart-card {
+    padding: 16px;
+  }
+  
   .error-banner {
     flex-direction: column;
     align-items: flex-start;
     
     .close-error {
       align-self: flex-end;
+    }
+  }
+  
+  .result-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  
+  .result-metadata {
+    grid-template-columns: 1fr;
+  }
+  
+  .analysis-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
     }
   }
   
@@ -154,5 +574,10 @@
     .btn-clear-history {
       width: 100%;
     }
+  }
+  
+  .history-header-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

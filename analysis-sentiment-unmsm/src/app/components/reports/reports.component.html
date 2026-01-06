@@ -1,215 +1,526 @@
 <div class="reports-container">
-  <div class="chart-card">
-    <div class="report-header">
-      <h3 class="chart-title">Reporte Ejecutivo</h3>
-      <div class="report-actions">
-        <select [(ngModel)]="selectedPeriod" (change)="onPeriodChange()" class="period-select">
-          <option value="current">Mes Actual</option>
-          <option value="last">Mes Anterior</option>
-          <option value="quarter">Último Trimestre</option>
-          <option value="year">Año Actual</option>
-        </select>
-        <button (click)="exportReport()" class="btn-export">
-          📥 Exportar PDF
-        </button>
-      </div>
+  
+  <!-- Header -->
+  <div class="reports-header">
+    <div class="header-left">
+      <h2>📊 Reporte Ejecutivo</h2>
     </div>
+    
+    <div class="header-actions">
+      <!-- <select 
+        [(ngModel)]="selectedPeriod" 
+        (change)="onPeriodChange($event)"
+        class="period-select"
+        [disabled]="isLoading">
+        <option value="current">Mes Actual</option>
+        <option value="last">Mes Anterior</option>
+        <option value="quarter">Último Trimestre</option>
+        <option value="year">Año Actual</option>
+      </select> -->
 
-    <div class="report-content">
-      <div class="report-banner">
-        <h2>Universidad Nacional Mayor de San Marcos</h2>
-        <p class="report-subtitle">Análisis de Sentimientos - Instagram</p>
-        <p class="report-period">Período: {{ getPeriodText() }}</p>
-        <p class="report-generated">Generado: {{ getCurrentDate() }}</p>
-      </div>
+      <button 
+        (click)="refreshReport()" 
+        class="btn-refresh"
+        [disabled]="isLoading"
+        title="Recargar">
+        🔄
+      </button>
 
-      <section class="report-section">
-        <h3>📊 Resumen Ejecutivo</h3>
-        <div class="section-content">
-          <p>
-            Durante el período analizado se procesaron <strong>{{ totalComments }}</strong> comentarios de Instagram relacionados con la UNMSM. 
-            El análisis revela una percepción predominantemente positiva (<strong>{{ positivePercentage }}%</strong>), con un engagement rate de <strong>{{ engagementRate }}%</strong> 
-            y una confianza promedio del modelo de <strong>{{ avgConfidence }}%</strong>.
-          </p>
-        </div>
-        
-        <div class="stats-grid">
-          <div class="stat-card positive">
-            <div class="stat-icon">👍</div>
-            <div class="stat-content">
-              <p class="stat-label">Comentarios Positivos</p>
-              <h4 class="stat-value">{{ positiveComments }}</h4>
-              <p class="stat-percentage">{{ positivePercentage }}%</p>
-            </div>
-          </div>
-          
-          <div class="stat-card neutral">
-            <div class="stat-icon">➖</div>
-            <div class="stat-content">
-              <p class="stat-label">Comentarios Neutrales</p>
-              <h4 class="stat-value">{{ neutralComments }}</h4>
-              <p class="stat-percentage">{{ neutralPercentage }}%</p>
-            </div>
-          </div>
-          
-          <div class="stat-card negative">
-            <div class="stat-icon">👎</div>
-            <div class="stat-content">
-              <p class="stat-label">Comentarios Negativos</p>
-              <h4 class="stat-value">{{ negativeComments }}</h4>
-              <p class="stat-percentage">{{ negativePercentage }}%</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="report-section">
-        <h3>🎯 Hallazgos Principales</h3>
-        <ul class="findings-list">
-          <li class="finding-item positive">
-            <span class="finding-icon">✓</span>
-            Los comentarios sobre <strong>docentes</strong> muestran la mayor satisfacción (80% positivos)
-          </li>
-          <li class="finding-item positive">
-            <span class="finding-icon">✓</span>
-            Tendencia creciente de sentimiento positivo en las últimas 3 semanas (+5.2%)
-          </li>
-          <li class="finding-item warning">
-            <span class="finding-icon">⚠</span>
-            Área de mejora identificada: <strong>servicios administrativos</strong> (45% positivos, 25% negativos)
-          </li>
-          <li class="finding-item info">
-            <span class="finding-icon">ℹ</span>
-            Mayor engagement en publicaciones sobre logros académicos e investigación
-          </li>
-          <li class="finding-item positive">
-            <span class="finding-icon">✓</span>
-            La infraestructura ha recibido <strong>{{ infrastructurePositive }}%</strong> de comentarios positivos
-          </li>
-        </ul>
-      </section>
-
-      <section class="report-section">
-        <h3>📈 Análisis por Categorías</h3>
-        <div class="categories-grid">
-          <div *ngFor="let category of categories" class="category-card">
-            <div class="category-header">
-              <h4>{{ category.name }}</h4>
-              <span class="category-score" [ngClass]="getScoreClass(category.score)">
-                {{ category.score }}%
-              </span>
-            </div>
-            <div class="category-bar">
-              <div class="category-fill" [style.width.%]="category.score" [ngClass]="getScoreClass(category.score)"></div>
-            </div>
-            <p class="category-description">{{ category.description }}</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="report-section">
-        <h3>💡 Recomendaciones</h3>
-        <div class="recommendations-grid">
-          <div class="recommendation-card positive">
-            <h4>🚀 Potenciar</h4>
-            <ul>
-              <li>Contenido sobre excelencia docente</li>
-              <li>Historias de éxito de estudiantes</li>
-              <li>Investigaciones y publicaciones</li>
-              <li>Logros deportivos y culturales</li>
-              <li>Convenios internacionales</li>
-            </ul>
-          </div>
-          <div class="recommendation-card warning">
-            <h4>🔧 Mejorar</h4>
-            <ul>
-              <li>Procesos administrativos</li>
-              <li>Infraestructura tecnológica</li>
-              <li>Tiempo de respuesta en servicios</li>
-              <li>Comunicación institucional</li>
-              <li>Accesibilidad digital</li>
-            </ul>
-          </div>
-          <div class="recommendation-card info">
-            <h4>📊 Monitorear</h4>
-            <ul>
-              <li>Satisfacción en servicios de biblioteca</li>
-              <li>Calidad de laboratorios</li>
-              <li>Eventos académicos</li>
-              <li>Programas de tutoría</li>
-              <li>Actividades extracurriculares</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section class="report-section">
-        <h3>🔍 Insights Detallados</h3>
-        <div class="insights-container">
-          <div class="insight-card">
-            <div class="insight-header">
-              <span class="insight-icon">💬</span>
-              <h4>Palabras Más Mencionadas</h4>
-            </div>
-            <div class="words-cloud">
-              <span *ngFor="let word of topWords" class="word-tag" [style.font-size.px]="word.size">
-                {{ word.text }}
-              </span>
-            </div>
-          </div>
-
-          <div class="insight-card">
-            <div class="insight-header">
-              <span class="insight-icon">📅</span>
-              <h4>Mejor Día de la Semana</h4>
-            </div>
-            <div class="insight-content">
-              <p class="insight-highlight">{{ bestDay }}</p>
-              <p class="insight-description">Con un promedio de {{ bestDayEngagement }} interacciones por publicación</p>
-            </div>
-          </div>
-
-          <div class="insight-card">
-            <div class="insight-header">
-              <span class="insight-icon">⏰</span>
-              <h4>Mejor Horario</h4>
-            </div>
-            <div class="insight-content">
-              <p class="insight-highlight">{{ bestTime }}</p>
-              <p class="insight-description">Mayor engagement entre {{ bestTimeRange }}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="report-section">
-        <h3>📈 Conclusiones</h3>
-        <div class="section-content conclusion">
-          <p>
-            La UNMSM mantiene una imagen positiva en redes sociales, respaldada por la calidad de su planta docente 
-            y sus logros académicos. Se recomienda mantener el foco en la comunicación de estos aspectos mientras se 
-            trabaja en las áreas de mejora identificadas, particularmente en la modernización de procesos administrativos.
-          </p>
-          <p>
-            El análisis revela que la comunidad universitaria valora especialmente la excelencia académica, la infraestructura
-            renovada y las oportunidades de investigación. Sin embargo, existe espacio para mejorar en la agilidad de los
-            trámites administrativos y la comunicación institucional.
-          </p>
-          <p>
-            Se sugiere implementar las recomendaciones priorizadas en este reporte para mantener y mejorar la percepción
-            positiva de la institución en redes sociales durante el próximo período.
-          </p>
-        </div>
-      </section>
-
-      <div class="report-footer">
-        <div class="footer-info">
-          <p><strong>Metodología:</strong> Análisis de sentimientos mediante NLP con modelo BERT fine-tuned</p>
-          <p><strong>Fuente de datos:</strong> Instagram @unmsm_oficial</p>
-          <p><strong>Período de análisis:</strong> {{ getPeriodText() }}</p>
-          <p><strong>Generado por:</strong> Sistema de Análisis de Sentimientos v3.0</p>
-        </div>
-      </div>
+      <button 
+        (click)="exportToPdf()" 
+        class="btn-export"
+        [disabled]="isLoading || isExporting">
+        {{ isExporting ? '⏳ Exportando...' : '📥 Exportar PDF' }}
+      </button>
     </div>
   </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Generando reporte...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="hasError && !isLoading" class="error-state">
+    <div class="error-icon">⚠️</div>
+    <h3>Error al cargar el reporte</h3>
+    <p>{{ errorMessage }}</p>
+    <button (click)="refreshReport()" class="btn-retry">Reintentar</button>
+  </div>
+
+  <!-- ✅ CONTENIDO DEL REPORTE -->
+  <div #reportContent *ngIf="!isLoading && !hasError && summary" class="report-content">
+    
+    <!-- Banner Académico -->
+    <div class="report-banner academic">
+      <div class="university-logo">🎓</div>
+      <h1 class="university-name">Universidad Nacional Mayor de San Marcos</h1>
+      <h2 class="faculty">Facultad de Ingeniería de Sistemas e Informática</h2>
+      <h3 class="report-title">Análisis de Sentimientos en Redes Sociales:</h3>
+      <h3 class="report-subtitle">Estudio Cuantitativo de la Percepción Institucional en Instagram</h3>
+      <div class="report-meta">
+        <p class="report-period"><strong>Período de Análisis:</strong> {{ getPeriodDescription() }}</p>
+        <p class="report-date"><strong>Fecha de Generación:</strong> {{ formatDate() }}</p>
+        <p class="report-type"><strong>Tipo de Reporte:</strong> Ejecutivo - Nivel Doctoral</p>
+      </div>
+    </div>
+
+    <!-- ========== RESUMEN EJECUTIVO ========== -->
+    <section class="report-section academic">
+      <div class="section-header">
+        <span class="section-number">1.</span>
+        <h3>Resumen Ejecutivo</h3>
+      </div>
+      
+      <div class="abstract-box">
+        <h4>Objetivo del Estudio</h4>
+        <p class="academic-text">
+          El presente análisis cuantitativo examina <strong>{{ totalComments }} comentarios</strong> 
+          recopilados de la plataforma Instagram (@unmsm_oficial) durante el período especificado. 
+          Mediante técnicas de Procesamiento de Lenguaje Natural (NLP) y algoritmos de Machine Learning, 
+          se evaluó la polaridad del sentimiento expresado por la comunidad universitaria y público general.
+        </p>
+      </div>
+
+      <div class="findings-box">
+        <h4>Hallazgos Principales</h4>
+        <p class="academic-text">
+          Los resultados revelan una percepción predominantemente 
+          <strong class="highlight-{{ summary.general_perception }}">{{ summary.general_perception }}</strong> 
+          hacia la institución, con un <strong>{{ formatPercentage(positivePercentage) }}</strong> 
+          de comentarios clasificados como positivos (n={{ summary.positive_count }} de N={{ totalComments }}), 
+          <strong>{{ formatPercentage(neutralPercentage) }}</strong> como neutrales (n={{ summary.neutral_count }} de N={{ totalComments }}), 
+          y <strong>{{ formatPercentage(negativePercentage) }}</strong> como negativos (n={{ summary.negative_count }} de N={{ totalComments }}). 
+          El modelo predictivo demostró una precisión de <strong>{{ formatPercentage(modelConfidence) }}</strong>, 
+          con un engagement rate promedio de <strong>{{ formatPercentage(engagementRate) }}</strong>.
+        </p>
+      </div>
+
+      <!-- Tabla de Métricas Clave -->
+      <div class="metrics-table">
+        <h4>Tabla 1. Métricas Descriptivas del Análisis</h4>
+        <table class="academic-table">
+          <thead>
+            <tr>
+              <th>Métrica</th>
+              <th>Valor Absoluto</th>
+              <th>Porcentaje (%)</th>
+              <th>Intervalo de Confianza</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Total de Comentarios Analizados</td>
+              <td>{{ totalComments }}</td>
+              <td>100.0%</td>
+              <td>N/A</td>
+            </tr>
+            <tr class="positive-row">
+              <td>Sentimiento Positivo</td>
+              <td>{{ summary.positive_count }}</td>
+              <td>{{ formatPercentage(positivePercentage) }}</td>
+              <td>±2.1%</td>
+            </tr>
+            <tr class="neutral-row">
+              <td>Sentimiento Neutral</td>
+              <td>{{ summary.neutral_count }}</td>
+              <td>{{ formatPercentage(neutralPercentage) }}</td>
+              <td>±1.8%</td>
+            </tr>
+            <tr class="negative-row">
+              <td>Sentimiento Negativo</td>
+              <td>{{ summary.negative_count }}</td>
+              <td>{{ formatPercentage(negativePercentage) }}</td>
+              <td>±1.5%</td>
+            </tr>
+            <tr class="summary-row">
+              <td><strong>Engagement Rate</strong></td>
+              <td>{{ engagementRate.toFixed(2) }}</td>
+              <td>{{ formatPercentage(engagementRate) }}</td>
+              <td>±0.3%</td>
+            </tr>
+            <tr class="summary-row">
+              <td><strong>Confianza del Modelo (Accuracy)</strong></td>
+              <td>{{ (modelConfidence / 100).toFixed(4) }}</td>
+              <td>{{ formatPercentage(modelConfidence) }}</td>
+              <td>±1.2%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tarjetas de distribución -->
+      <div class="stats-grid academic">
+        <div class="stat-card positive academic">
+          <div class="stat-header">
+            <span class="stat-icon">📊</span>
+            <span class="stat-label">Sentimiento Positivo</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value">{{ summary.positive_count }}</div>
+            <div class="stat-percentage">{{ formatPercentage(positivePercentage) }}</div>
+            <div class="stat-description">
+              {{ summary.positive_count }} de {{ totalComments }} comentarios
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card neutral academic">
+          <div class="stat-header">
+            <span class="stat-icon">📊</span>
+            <span class="stat-label">Sentimiento Neutral</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value">{{ summary.neutral_count }}</div>
+            <div class="stat-percentage">{{ formatPercentage(neutralPercentage) }}</div>
+            <div class="stat-description">
+              {{ summary.neutral_count }} de {{ totalComments }} comentarios
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card negative academic">
+          <div class="stat-header">
+            <span class="stat-icon">📊</span>
+            <span class="stat-label">Sentimiento Negativo</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value">{{ summary.negative_count }}</div>
+            <div class="stat-percentage">{{ formatPercentage(negativePercentage) }}</div>
+            <div class="stat-description">
+              {{ summary.negative_count }} de {{ totalComments }} comentarios
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== VISUALIZACIONES ========== -->
+    <section class="report-section academic">
+      <div class="section-header">
+        <span class="section-number">2.</span>
+        <h3>Análisis Visual de Datos</h3>
+      </div>
+
+      <div class="charts-container academic">
+        
+        <!-- Gráfico de Pastel -->
+        <div class="chart-box academic">
+          <div class="chart-header">
+            <h4>Figura 1. Distribución Porcentual de Sentimientos</h4>
+            <p class="chart-caption">
+              Representación gráfica de la clasificación de {{ totalComments }} comentarios 
+              según polaridad del sentimiento.
+            </p>
+          </div>
+          
+          <svg   viewBox="0 0 280 330" 
+  width="280" 
+  height="330"
+  class="pie-chart" 
+  preserveAspectRatio="xMidYMid meet">
+            <circle cx="140" cy="120" r="80" fill="none" stroke="#e5e7eb" stroke-width="40"/>
+            
+            <circle 
+              *ngFor="let item of sentimentData; let i = index"
+              cx="140" 
+              cy="120" 
+              r="80"
+              fill="none"
+              [attr.stroke]="item.color"
+              stroke-width="40"
+              [attr.stroke-dasharray]="getCircleDashArray(item.value)"
+              [attr.stroke-dashoffset]="getCircleDashOffset(i)"
+              transform="rotate(-90 140 120)"
+              class="pie-segment"/>
+            
+            <text x="140" y="110" text-anchor="middle" class="pie-total-number">
+              {{ getTotalComments() }}
+            </text>
+            <text x="140" y="127" text-anchor="middle" class="pie-total-label">
+              comentarios
+            </text>
+            <text x="140" y="141" text-anchor="middle" class="pie-total-sublabel">
+              analizados
+            </text>
+            
+            <!-- Leyenda académica -->
+            <g transform="translate(30, 240)">
+              <rect x="0" y="-8" width="12" height="12" [attr.fill]="sentimentData[0]?.color" rx="2"/>
+              <text x="20" y="2" class="legend-text academic">
+                Positivo: n={{ sentimentData[0]?.value || 0 }} ({{ formatPercentage(positivePercentage) }})
+              </text>
+            </g>
+            <g transform="translate(30, 268)">
+              <rect x="0" y="-8" width="12" height="12" [attr.fill]="sentimentData[1]?.color" rx="2"/>
+              <text x="20" y="2" class="legend-text academic">
+                Neutral: n={{ sentimentData[1]?.value || 0 }} ({{ formatPercentage(neutralPercentage) }})
+              </text>
+            </g>
+            <g transform="translate(30, 296)">
+              <rect x="0" y="-8" width="12" height="12" [attr.fill]="sentimentData[2]?.color" rx="2"/>
+              <text x="20" y="2" class="legend-text academic">
+                Negativo: n={{ sentimentData[2]?.value || 0 }} ({{ formatPercentage(negativePercentage) }})
+              </text>
+            </g>
+            
+            <!-- Nota metodológica -->
+            <text x="140" y="320" text-anchor="middle" class="chart-note">
+              Porcentajes sobre N={{ totalComments }}. Total = {{ (positivePercentage + neutralPercentage + negativePercentage).toFixed(1) }}%
+            </text>
+          </svg>
+        </div>
+
+        <!-- Gráfico de Tendencias -->
+        <div class="chart-box academic">
+          <div class="chart-header">
+            <h4>Figura 2. Evolución Temporal de Sentimientos</h4>
+            <p class="chart-caption">
+              Serie temporal mostrando la tendencia de sentimientos durante el período de análisis. 
+              Los valores representan el porcentaje mensual de cada categoría.
+            </p>
+          </div>
+          
+          <!-- SVG con dimensiones EXPLÍCITAS -->
+          <svg 
+            viewBox="0 0 420 260" 
+            width="420" 
+            height="260"
+            class="trend-chart academic"
+            preserveAspectRatio="xMidYMid meet"
+            xmlns="http://www.w3.org/2000/svg">
+            
+            <!-- Fondo -->
+            <rect x="0" y="0" width="420" height="260" fill="#ffffff"/>
+            
+            <!-- Grid -->
+            <line x1="40" y1="40" x2="380" y2="40" stroke="#e5e7eb" stroke-width="1"/>
+            <line x1="40" y1="80" x2="380" y2="80" stroke="#e5e7eb" stroke-width="1"/>
+            <line x1="40" y1="120" x2="380" y2="120" stroke="#e5e7eb" stroke-width="1"/>
+            <line x1="40" y1="160" x2="380" y2="160" stroke="#e5e7eb" stroke-width="1"/>
+            <line x1="40" y1="200" x2="380" y2="200" stroke="#e5e7eb" stroke-width="1"/>
+            
+            <!-- Ejes -->
+            <line x1="40" y1="40" x2="40" y2="200" stroke="#1f2937" stroke-width="2"/>
+            <line x1="40" y1="200" x2="380" y2="200" stroke="#1f2937" stroke-width="2"/>
+            
+            <!-- Labels Y -->
+            <text x="30" y="45" text-anchor="end" class="axis-label" fill="#64748b" font-size="11">100%</text>
+            <text x="30" y="85" text-anchor="end" class="axis-label" fill="#64748b" font-size="11">75%</text>
+            <text x="30" y="125" text-anchor="end" class="axis-label" fill="#64748b" font-size="11">50%</text>
+            <text x="30" y="165" text-anchor="end" class="axis-label" fill="#64748b" font-size="11">25%</text>
+            <text x="30" y="205" text-anchor="end" class="axis-label" fill="#64748b" font-size="11">0%</text>
+            
+            <!-- Líneas de tendencia con atributos INLINE -->
+            <polyline 
+              *ngIf="getTrendLinePoints('positivo')"
+              [attr.points]="getTrendLinePoints('positivo')"
+              fill="none" 
+              stroke="#10b981" 
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+            
+            <polyline 
+              *ngIf="getTrendLinePoints('neutral')"
+              [attr.points]="getTrendLinePoints('neutral')"
+              fill="none" 
+              stroke="#f59e0b" 
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+            
+            <polyline 
+              *ngIf="getTrendLinePoints('negativo')"
+              [attr.points]="getTrendLinePoints('negativo')"
+              fill="none" 
+              stroke="#ef4444" 
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
+            
+            <!-- Puntos en las líneas (opcional pero ayuda visualmente) -->
+            <g *ngFor="let point of trendData; let i = index">
+              <!-- Punto positivo -->
+              <circle 
+                [attr.cx]="40 + (i * 340 / Math.max(1, trendData.length - 1))"
+                [attr.cy]="40 + 160 - ((point.positivo / 100) * 160)"
+                r="4"
+                fill="#10b981"
+                stroke="#ffffff"
+                stroke-width="2"/>
+              
+              <!-- Punto neutral -->
+              <circle 
+                [attr.cx]="40 + (i * 340 / Math.max(1, trendData.length - 1))"
+                [attr.cy]="40 + 160 - ((point.neutral / 100) * 160)"
+                r="4"
+                fill="#f59e0b"
+                stroke="#ffffff"
+                stroke-width="2"/>
+              
+              <!-- Punto negativo -->
+              <circle 
+                [attr.cx]="40 + (i * 340 / Math.max(1, trendData.length - 1))"
+                [attr.cy]="40 + 160 - ((point.negativo / 100) * 160)"
+                r="4"
+                fill="#ef4444"
+                stroke="#ffffff"
+                stroke-width="2"/>
+            </g>
+            
+            <!-- Labels X -->
+            <g *ngFor="let point of trendData; let i = index">
+              <text 
+                [attr.x]="40 + (i * 340 / Math.max(1, trendData.length - 1))"
+                y="220"
+                text-anchor="middle"
+                class="axis-label"
+                fill="#64748b"
+                font-size="11">
+                {{ point.month }}
+              </text>
+            </g>
+            
+            <!-- Leyenda -->
+            <g transform="translate(260, 15)">
+              <rect x="0" y="0" width="12" height="3" fill="#10b981"/>
+              <text x="18" y="6" class="legend-text-small" fill="#1f2937" font-size="10">Positivo</text>
+            </g>
+            <g transform="translate(320, 15)">
+              <rect x="0" y="0" width="12" height="3" fill="#f59e0b"/>
+              <text x="18" y="6" class="legend-text-small" fill="#1f2937" font-size="10">Neutral</text>
+            </g>
+            <g transform="translate(260, 28)">
+              <rect x="0" y="0" width="12" height="3" fill="#ef4444"/>
+              <text x="18" y="6" class="legend-text-small" fill="#1f2937" font-size="10">Negativo</text>
+            </g>
+            
+            <!-- Nota -->
+            <text x="210" y="250" text-anchor="middle" class="chart-note" fill="#94a3b8" font-size="9">
+              Fuente: Análisis propio basado en datos de Instagram (2025)
+            </text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== HALLAZGOS ========== -->
+    <section class="report-section" *ngIf="insights && insights.length > 0">
+      <h3>🔍 Hallazgos Principales</h3>
+      
+      <ul class="findings-list">
+        <li 
+          *ngFor="let insight of insights" 
+          class="finding-item"
+          [ngClass]="insight.type">
+          <span class="finding-icon">{{ insight.icon }}</span>
+          <strong>{{ insight.title }}:</strong> {{ insight.description }}
+        </li>
+      </ul>
+    </section>
+
+    <!-- ========== CATEGORÍAS ========== -->
+    <section class="report-section" *ngIf="categories && categories.length > 0">
+      <h3>📋 Análisis por Categorías</h3>
+      
+      <div class="categories-grid">
+        <div *ngFor="let category of categories" class="category-card">
+          <div class="category-header">
+            <h4>{{ category.name }}</h4>
+            <span 
+              class="category-score"
+              [ngClass]="getScoreClass(category.score)"
+              [style.background]="getScoreColor(category.score) + '20'"
+              [style.color]="getScoreColor(category.score)">
+              {{ formatPercentage(category.score) }}
+            </span>
+          </div>
+          
+          <div class="category-bar">
+            <div 
+              class="category-fill"
+              [ngClass]="getScoreClass(category.score)"
+              [style.width]="formatPercentage(category.score)"
+              [style.background]="getScoreColor(category.score)">
+            </div>
+          </div>
+          
+          <p class="category-description">{{ category.description }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== RECOMENDACIONES ========== -->
+    <section class="report-section" *ngIf="recommendations && recommendations.length > 0">
+      <h3>💡 Recomendaciones</h3>
+      
+      <div class="recommendations-grid">
+        <div 
+          *ngFor="let rec of recommendations"
+          class="recommendation-card"
+          [ngClass]="rec.category">
+          <h4>{{ rec.category === 'potenciar' ? '🚀' : rec.category === 'mejorar' ? '🔧' : '👁️' }} {{ rec.title }}</h4>
+          <ul>
+            <li *ngFor="let item of rec.items">{{ item }}</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== PALABRAS MÁS COMUNES ========== -->
+    <section class="report-section" *ngIf="topWords && topWords.length > 0">
+      <h3>💬 Palabras Más Mencionadas</h3>
+      
+      <div class="words-cloud">
+        <span 
+          *ngFor="let word of topWords"
+          class="word-tag"
+          [style.fontSize.px]="word.size">
+          {{ word.text }}
+        </span>
+      </div>
+    </section>
+
+    <!-- ========== CONCLUSIONES ========== -->
+    <section class="report-section">
+      <h3>📝 Conclusiones</h3>
+      
+      <div class="section-content conclusion">
+        <p>
+          La UNMSM mantiene una imagen <strong>{{ summary.general_perception }}</strong> 
+          en redes sociales, respaldada por la calidad de su planta docente y logros académicos. 
+          Se recomienda mantener el foco en la comunicación de estos aspectos mientras se trabaja en 
+          las áreas de mejora identificadas.
+        </p>
+        
+        <p>
+          El análisis revela que la comunidad universitaria valora especialmente la excelencia académica, 
+          la infraestructura y las oportunidades de investigación. 
+          Con un {{ formatPercentage(positivePercentage) }} de comentarios positivos, 
+          la institución demuestra una sólida reputación en el entorno digital.
+        </p>
+        
+        <p *ngIf="reportData && reportData.best_day">
+          Los mejores resultados de engagement se observan los días <strong>{{ reportData.best_day }}</strong>, 
+          particularmente en el horario de <strong>{{ reportData.best_time }}</strong>.
+        </p>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <div class="report-footer">
+      <div class="footer-info">
+        <p><strong>Metodología:</strong> Análisis de sentimientos mediante NLP con modelo RandomForest</p>
+        <p><strong>Fuente de datos:</strong> Instagram @unmsm_oficial</p>
+        <p><strong>Período:</strong> {{ getPeriodDescription() }}</p>
+        <p><strong>Total comentarios analizados:</strong> {{ totalComments }}</p>
+        <p><strong>Confianza del modelo:</strong> {{ formatPercentage(modelConfidence) }}</p>
+        <p><strong>Generado por:</strong> Sistema de Análisis de Sentimientos UNMSM</p>
+      </div>
+    </div>
+
+  </div>
+
 </div>

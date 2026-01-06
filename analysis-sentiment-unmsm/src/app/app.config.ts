@@ -43,7 +43,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { AuthService } from './core/services/auth.service';  // ✅ Añadido
 import { SentimentAnalysisService } from './core/services/sentiment-analysis.service';
 import { StatisticsService } from './core/services/statistics.service';
-import { ReportsService } from './core/services/reports.service';
+import { ReportService } from './core/services/reports.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -63,7 +63,7 @@ export const appConfig: ApplicationConfig = {
     AuthService,  // ✅ Añadido
     SentimentAnalysisService,
     StatisticsService,
-    ReportsService,
+    ReportService,
     
     // Firebase App
     provideFirebaseApp(() => {

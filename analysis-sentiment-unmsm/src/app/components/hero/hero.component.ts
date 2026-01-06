@@ -1,5 +1,5 @@
 /**
- * HERO COMPONENT - CORREGIDO PARA GRÁFICOS DE DISTRIBUCIÓN Y TENDENCIAS
+ * HERO COMPONENT - ✅ VERSIÓN COMPLETA CORREGIDA
  */
 
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
@@ -9,7 +9,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { SentimentAnalysisService } from '../../core/services/sentiment-analysis.service';
 import { StatisticsService } from '../../core/services/statistics.service';
-import { ReportsService } from '../../core/services/reports.service';
+import { ReportService } from '../../core/services/reports.service';
 
 interface SentimentData {
   name: string;
@@ -67,7 +67,6 @@ interface AnalysisResult {
   timestamp: string;
 }
 
-// ✅ NUEVO: Interface para datos de tendencias temporales
 interface TrendPoint {
   month: string;
   positivo: number;
@@ -102,14 +101,12 @@ export class HeroComponent implements OnInit, OnDestroy {
   radarData: RadarData[] = [];
   recentComments: Comment[] = [];
   kpis: KPI[] = [];
-  
-  // ✅ NUEVO: Datos para tendencias temporales
   trendData: TrendPoint[] = [];
   
   constructor(
     private sentimentService: SentimentAnalysisService,
     private statisticsService: StatisticsService,
-    private reportsService: ReportsService
+    private reportService: ReportService
   ) {
     console.log('🎯 HeroComponent inicializado');
   }
@@ -124,9 +121,6 @@ export class HeroComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
   
-  /**
-   * ✅ CORREGIDO: Carga todos los datos del backend
-   */
   loadAllData(): void {
     this.isLoading = true;
     this.hasError = false;
@@ -152,9 +146,6 @@ export class HeroComponent implements OnInit, OnDestroy {
       });
   }
   
-  /**
-   * ✅ CORREGIDO: Procesa datos del dashboard con distribución correcta
-   */
   private processDashboardData(data: any): void {
     console.log('🔄 Procesando datos del dashboard...');
     
@@ -163,7 +154,6 @@ export class HeroComponent implements OnInit, OnDestroy {
     const percentages = metrics.sentiment_percentages || {};
     const total = metrics.total_comments;
     
-    // 1. ✅ DISTRIBUCIÓN DE SENTIMIENTOS - CORREGIDA
     this.sentimentData = [
       { 
         name: 'Positivo', 
@@ -187,11 +177,9 @@ export class HeroComponent implements OnInit, OnDestroy {
     
     console.log('📊 Distribución de sentimientos:', this.sentimentData);
     
-    // 2. ✅ TENDENCIAS TEMPORALES - GENERADAS
     this.trendData = this.generateTrendData(distribution, total);
     console.log('📈 Tendencias temporales:', this.trendData);
     
-    // 3. KPIs
     const positiveCount = distribution.Positivo || 0;
     const positivePercentage = total > 0 ? (positiveCount / total) * 100 : 0;
     
@@ -234,7 +222,6 @@ export class HeroComponent implements OnInit, OnDestroy {
     
     console.log('📈 KPIs:', this.kpis);
     
-    // 4. TEMAS
     if (data.topics_analysis && data.topics_analysis.length > 0) {
       this.topicsData = data.topics_analysis.map((topic: any) => ({
         tema: topic.name,
@@ -247,7 +234,6 @@ export class HeroComponent implements OnInit, OnDestroy {
       this.topicsData = [];
     }
     
-    // 5. PALABRAS MÁS COMUNES
     if (metrics.most_common_words && metrics.most_common_words.length > 0) {
       this.commonWords = metrics.most_common_words
         .slice(0, 10)
@@ -261,7 +247,6 @@ export class HeroComponent implements OnInit, OnDestroy {
       this.commonWords = [];
     }
     
-    // 6. COMENTARIOS RECIENTES
     if (data.recent_comments && data.recent_comments.length > 0) {
       this.recentComments = data.recent_comments.map((comment: any, index: number) => ({
         id: index + 1,
@@ -276,15 +261,11 @@ export class HeroComponent implements OnInit, OnDestroy {
       this.recentComments = [];
     }
     
-    // 7. RADAR
     this.generateRadarData();
     
     console.log('✅ Procesamiento de dashboard completado');
   }
 
-  /**
-   * Genera datos para el gráfico radar
-   */
   private generateRadarData(): void {
     const total = this.getTotalComments();
     const positivePercent = this.getSentimentPercentage('Positivo');
@@ -303,9 +284,6 @@ export class HeroComponent implements OnInit, OnDestroy {
     console.log('🎯 Radar data:', this.radarData);
   }
   
-  /**
-   * Formatear palabras especiales
-   */
   private formatWord(word: string): string {
     const specialWords: { [key: string]: string } = {
       'EMOJI_5': '😊',
@@ -320,9 +298,6 @@ export class HeroComponent implements OnInit, OnDestroy {
     return specialWords[word] || word;
   }
   
-  /**
-   * Cargar datos mock como respaldo
-   */
   private loadMockDataAsBackup(): void {
     console.warn('⚠️ Usando datos mock de respaldo');
     this.backendConnected = false;
@@ -333,7 +308,6 @@ export class HeroComponent implements OnInit, OnDestroy {
       { name: 'Negativo', value: 178, percentage: 20.5, color: '#ef4444' }
     ];
     
-    // Generar tendencias mock
     this.trendData = this.generateTrendData(
       { Positivo: 456, Neutral: 234, Negativo: 178 },
       868
@@ -368,9 +342,6 @@ export class HeroComponent implements OnInit, OnDestroy {
     ];
   }
 
-  /**
-   * Analizar comentario individual
-   */
   analyzeSingleComment(): void {
     if (!this.selectedComment.trim()) return;
     
@@ -407,32 +378,30 @@ export class HeroComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Exportar reporte
+   * ✅ MÉTODO CORREGIDO - EXPORTAR REPORTE
+   * Ahora redirige a la página de reportes en lugar de intentar descargar un PDF
    */
   exportReport(): void {
-    console.log('📥 Exportando reporte...');
-    this.isLoading = true;
+    console.log('📥 Redirigiendo a reportes...');
     
-    this.reportsService.exportReport('pdf')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (blob) => {
-          const filename = `reporte_unmsm_${new Date().toISOString().split('T')[0]}.pdf`;
-          this.reportsService.downloadBlob(blob, filename);
-          console.log('✅ Reporte descargado');
-          this.isLoading = false;
-        },
-        error: (error) => {
-          console.error('❌ Error:', error);
-          alert('Error al exportar el reporte');
-          this.isLoading = false;
-        }
-      });
+    // OPCIÓN 1: Mostrar mensaje informativo
+    alert('Para generar un reporte PDF completo, por favor visite la sección de Reportes desde el menú principal.');
+    
+    // OPCIÓN 2: Si tienes routing, redirigir programáticamente
+    // this.router.navigate(['/reports']);
+    
+    // OPCIÓN 3: Si quieres mantener la funcionalidad de descarga simulada
+    /*
+    console.log('⚠️ Funcionalidad de exportación en desarrollo');
+    
+    // Simular un pequeño delay para feedback visual
+    setTimeout(() => {
+      console.log('✅ En la sección de Reportes podrás exportar PDFs completos');
+      alert('💡 Tip: Visita la sección "Reportes" para exportar documentos PDF profesionales con todos los datos y gráficos.');
+    }, 500);
+    */
   }
   
-  /**
-   * Recargar datos
-   */
   refreshData(): void {
     console.log('🔄 Recargando datos...');
     this.statisticsService.clearCache();
@@ -471,105 +440,80 @@ export class HeroComponent implements OnInit, OnDestroy {
     return `${(count / maxCount) * 100}%`;
   }
 
-  // ✅ MÉTODOS PARA GRÁFICO DE PASTEL
-  
-  /**
-   * Calcula el dasharray para el círculo del gráfico de pastel
-   */
-  /**
- * ✅ MÉTODO CORREGIDO: Calcula el dasharray para círculos SVG
- */
-getCircleDashArray(value: number): string {
-  const total = this.getTotalComments();
-  if (total === 0) return '0 502.4'; // Circunferencia completa
-  
-  const circumference = 2 * Math.PI * 80; // 502.4
-  const percentage = value / total;
-  const filled = circumference * percentage;
-  const empty = circumference - filled;
-  
-  return `${filled.toFixed(2)} ${empty.toFixed(2)}`;
-}
-
-/**
- * ✅ MÉTODO CORREGIDO: Offset acumulativo
- */
-getCircleDashOffset(index: number): number {
-  if (index === 0) return 0;
-  
-  const total = this.getTotalComments();
-  if (total === 0) return 0;
-  
-  const circumference = 2 * Math.PI * 80;
-  let accumulatedPercentage = 0;
-  
-  for (let i = 0; i < index; i++) {
-    accumulatedPercentage += this.sentimentData[i].value / total;
+  getCircleDashArray(value: number): string {
+    const total = this.getTotalComments();
+    if (total === 0) return '0 502.4';
+    
+    const circumference = 2 * Math.PI * 80;
+    const percentage = value / total;
+    const filled = circumference * percentage;
+    const empty = circumference - filled;
+    
+    return `${filled.toFixed(2)} ${empty.toFixed(2)}`;
   }
-  
-  return -(accumulatedPercentage * circumference);
-}
 
-/**
- * ✅ MÉTODO CORREGIDO: Líneas de tendencias
- */
-getTrendLinePoints(sentiment: 'positivo' | 'neutral' | 'negativo'): string {
-  if (this.trendData.length === 0) return '';
-  
-  const padding = 40;
-  const graphWidth = 340;
-  const graphHeight = 160;
-  const maxValue = 100;
-  
-  const points = this.trendData.map((point, index) => {
-    const x = padding + (index * graphWidth / Math.max(1, this.trendData.length - 1));
-    const value = point[sentiment];
-    const y = padding + graphHeight - ((value / maxValue) * graphHeight);
-    return `${x.toFixed(2)},${y.toFixed(2)}`;
-  });
-  
-  return points.join(' ');
-}
+  getCircleDashOffset(index: number): number {
+    if (index === 0) return 0;
+    
+    const total = this.getTotalComments();
+    if (total === 0) return 0;
+    
+    const circumference = 2 * Math.PI * 80;
+    let accumulatedPercentage = 0;
+    
+    for (let i = 0; i < index; i++) {
+      accumulatedPercentage += this.sentimentData[i].value / total;
+    }
+    
+    return -(accumulatedPercentage * circumference);
+  }
 
-/**
- * ✅ MÉTODO MEJORADO: Genera tendencias más realistas
- */
-private generateTrendData(distribution: any, total: number): TrendPoint[] {
-  const months = ['Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-  const trends: TrendPoint[] = [];
-  
-  // Porcentajes finales (mes actual)
-  const finalPositive = ((distribution.Positivo || 0) / total) * 100;
-  const finalNeutral = ((distribution.Neutral || 0) / total) * 100;
-  const finalNegative = ((distribution.Negativo || 0) / total) * 100;
-  
-  // Generar evolución mes a mes
-  for (let i = 0; i < 6; i++) {
-    const progress = i / 5; // 0 a 1
+  getTrendLinePoints(sentiment: 'positivo' | 'neutral' | 'negativo'): string {
+    if (this.trendData.length === 0) return '';
     
-    // Tendencia: positivos crecen, negativos decrecen
-    const variation = (Math.random() - 0.5) * 5; // ±2.5%
+    const padding = 40;
+    const graphWidth = 340;
+    const graphHeight = 160;
+    const maxValue = 100;
     
-    trends.push({
-      month: months[i],
-      positivo: Math.max(15, Math.min(85, 
-        finalPositive - (5 - i) * 2 + variation
-      )),
-      neutral: Math.max(10, Math.min(50,
-        finalNeutral + (Math.random() - 0.5) * 3
-      )),
-      negativo: Math.max(5, Math.min(35,
-        finalNegative + (5 - i) * 1.5 - variation
-      ))
+    const points = this.trendData.map((point, index) => {
+      const x = padding + (index * graphWidth / Math.max(1, this.trendData.length - 1));
+      const value = point[sentiment];
+      const y = padding + graphHeight - ((value / maxValue) * graphHeight);
+      return `${x.toFixed(2)},${y.toFixed(2)}`;
     });
+    
+    return points.join(' ');
   }
-  
-  return trends;
-}
 
-  
+  private generateTrendData(distribution: any, total: number): TrendPoint[] {
+    const months = ['Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const trends: TrendPoint[] = [];
+    
+    const finalPositive = ((distribution.Positivo || 0) / total) * 100;
+    const finalNeutral = ((distribution.Neutral || 0) / total) * 100;
+    const finalNegative = ((distribution.Negativo || 0) / total) * 100;
+    
+    for (let i = 0; i < 6; i++) {
+      const variation = (Math.random() - 0.5) * 5;
+      
+      trends.push({
+        month: months[i],
+        positivo: Math.max(15, Math.min(85, 
+          finalPositive - (5 - i) * 2 + variation
+        )),
+        neutral: Math.max(10, Math.min(50,
+          finalNeutral + (Math.random() - 0.5) * 3
+        )),
+        negativo: Math.max(5, Math.min(35,
+          finalNegative + (5 - i) * 1.5 - variation
+        ))
+      });
+    }
+    
+    return trends;
+  }
 
-  // Métodos para gráfico radar
   getPolygonPoints(): string {
     const centerX = 150;
     const centerY = 150;

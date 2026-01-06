@@ -44,6 +44,7 @@
 # app/schemas/__init__.py
 """
 Schemas para la API - UNMSM Sentiment Analysis
+✅ Exportaciones corregidas para reportes
 """
 
 from .analysis import (
@@ -56,26 +57,47 @@ from .analysis import (
     DatasetInfo,
     ModelTrainingResponse,
     StatisticsResponse,
-    ReportRequest,
-    ReportResponse,
     HealthCheckResponse,
     SentimentResult,
     ErrorResponse
 )
 
+# ✅ NUEVOS IMPORTS PARA REPORTES
+from .reports import (
+    ReportRequest,
+    ReportResponse,
+    ReportSummary,
+    ReportStatistics,
+    ReportInsight,
+    ReportRecommendation,
+    CategoryScore,
+    WordTag,
+    PeriodOption
+)
+
 __all__ = [
+    # Análisis
     "CommentAnalysisRequest",
     "SentimentAnalysisResponse",
     "BatchAnalysisRequest",
-    "BatchAnalysisResponse", 
+    "BatchAnalysisResponse",
     "SentimentProbabilities",
     "CommentFeatures",
     "DatasetInfo",
     "ModelTrainingResponse",
     "StatisticsResponse",
-    "ReportRequest",
-    "ReportResponse",
     "HealthCheckResponse",
     "SentimentResult",
-    "ErrorResponse"
+    "ErrorResponse",
+    
+    # ✅ Reportes
+    "ReportRequest",
+    "ReportResponse",
+    "ReportSummary",
+    "ReportStatistics",
+    "ReportInsight",
+    "ReportRecommendation",
+    "CategoryScore",
+    "WordTag",
+    "PeriodOption"
 ]

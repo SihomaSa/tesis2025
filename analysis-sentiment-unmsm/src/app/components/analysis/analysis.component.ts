@@ -97,7 +97,7 @@ export class AnalysisComponent implements OnInit, OnDestroy {
         this.error = error.message || 'Error analizando el comentario';
         this.isLoading = false;
         
-        // Mostrar resultado con error - CORREGIDO
+        // Mostrar resultado con error
         this.analysisResult = {
           success: false,
           comment: this.selectedComment,
@@ -109,7 +109,7 @@ export class AnalysisComponent implements OnInit, OnDestroy {
             neutral: 0,
             positivo: 0
           },
-          error: this.error || undefined,  // ✅ CAMBIADO: this.error a undefined si es null
+          error: this.error || undefined,
           timestamp: new Date().toISOString()
         };
       }
