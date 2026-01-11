@@ -1,347 +1,443 @@
-# 🎓 UNMSM Sentiment Analysis API
+# 🎓 Análisis de Sentimientos - UNMSM
 
-Sistema avanzado de análisis de sentimientos para comentarios de Instagram de la Universidad Nacional Mayor de San Marcos.
+Sistema de análisis de sentimientos para evaluar la percepción de la comunidad universitaria de la Universidad Nacional Mayor de San Marcos en redes sociales (Instagram).
 
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-green)](https://fastapi.tiangolo.com)
-[![Python](https://img.shields.io/badge/Python-3.12-blue)](https://python.org)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.5-orange)](https://scikit-learn.org)
-[![Railway](https://img.shields.io/badge/Railway-Deploy-purple)](https://railway.app)
+![Universidad Nacional Mayor de San Marcos](https://img.shields.io/badge/Universidad-UNMSM-red?style=for-the-badge)
+![Angular](https://img.shields.io/badge/Angular-18-DD0031?style=for-the-badge&logo=angular)
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.104-009688?style=for-the-badge&logo=fastapi)
+![Firebase](https://img.shields.io/badge/Firebase-Hosting-FFCA28?style=for-the-badge&logo=firebase)
 
-## 📋 Características
+## 🌐 Demo en Vivo
 
-- ✅ Análisis de sentimientos en tiempo real (Positivo/Neutral/Negativo)
-- ✅ Modelo ML entrenado con 868 comentarios reales
-- ✅ API REST completa con FastAPI
-- ✅ Análisis por lotes
-- ✅ Estadísticas detalladas
-- ✅ Análisis por temas/categorías
-- ✅ Palabras más comunes
-- ✅ Generación de reportes
-- ✅ Dashboard interactivo
+- **Frontend:** [https://analysis-sentiment-unmsm.web.app](https://analysis-sentiment-unmsm.web.app)
+- **Backend API:** https://tesis2025-production.up.railway.app
+- **Documentación API:** https://tesis2025-production.up.railway.app]/api/docs
 
-## 🚀 Inicio Rápido
+## 📋 Tabla de Contenidos
 
-### Requisitos Previos
+- [Características](#-características)
+- [Arquitectura](#-arquitectura)
+- [Tecnologías](#-tecnologías)
+- [Requisitos Previos](#-requisitos-previos)
+- [Instalación y Configuración](#-instalación-y-configuración)
+- [Uso](#-uso)
+- [API Documentation](#-api-documentation)
+- [Despliegue](#-despliegue)
+- [Estructura del Proyecto](#-estructura-del-proyecto)
+- [Contribuir](#-contribuir)
+- [Licencia](#-licencia)
+- [Autores](#-autores)
 
-- Python 3.12+
-- pip
+## ✨ Características
+
+### Frontend (Angular 18)
+- 🎨 **Dashboard Interactivo** con visualizaciones en tiempo real
+- 📊 **Gráficos Dinámicos** usando SVG nativo y librerías especializadas
+- 📄 **Exportación a PDF** de reportes ejecutivos con alta calidad
+- 🔐 **Autenticación** con Firebase Authentication
+- 📱 **Diseño Responsive** adaptado a todos los dispositivos
+- 🌓 **Modo Oscuro/Claro** (próximamente)
+- 🔄 **Actualización en Tiempo Real** de estadísticas
+
+### Backend (Python + FastAPI)
+- 🤖 **Análisis de Sentimientos** usando Machine Learning (RandomForest)
+- 📈 **Procesamiento de Lenguaje Natural (NLP)** con NLTK y spaCy
+- 🗂️ **API RESTful** documentada con OpenAPI/Swagger
+- 💾 **Caché Inteligente** para optimización de rendimiento
+- 📊 **Generación de Reportes** ejecutivos y estadísticos
+- 🔍 **Análisis de Temas** y palabras más frecuentes
+- ⚡ **Procesamiento Asíncrono** para grandes volúmenes de datos
+
+### Análisis de Datos
+- 📊 **Dataset:** 3,312+ comentarios de Instagram
+- 🎯 **Clasificación:** Positivo, Neutral, Negativo
+- 📈 **Métricas:** Precisión del 86%+
+- 🏷️ **Categorías:** Enseñanza, Infraestructura, Servicios, Tecnología
+- 📅 **Análisis Temporal:** Tendencias por mes/trimestre/año
+
+## 🏗️ Arquitectura
+
+```
+┌─────────────────┐         ┌──────────────────┐         ┌─────────────┐
+│                 │         │                  │         │             │
+│  Angular 18     │◄───────►│  FastAPI Backend │◄───────►│  Firebase   │
+│  Frontend       │  HTTPS  │  Python 3.11     │  Auth   │  Services   │
+│                 │         │                  │         │             │
+└─────────────────┘         └──────────────────┘         └─────────────┘
+        │                           │
+        │                           │
+        ▼                           ▼
+┌─────────────────┐         ┌──────────────────┐
+│                 │         │                  │
+│  Firebase       │         │  ML Models       │
+│  Hosting        │         │  Dataset (CSV)   │
+│                 │         │                  │
+└─────────────────┘         └──────────────────┘
+```
+
+## 🛠️ Tecnologías
+
+### Frontend
+- **Framework:** Angular 18.2.0 (Standalone Components)
+- **Lenguaje:** TypeScript 5.5
+- **Estilos:** SCSS + CSS Custom Properties
+- **Gráficos:** SVG Nativo
+- **Autenticación:** Firebase Auth
+- **Hosting:** Firebase Hosting
+- **Exportación PDF:** html2pdf.js
+- **HTTP Client:** Angular HttpClient
+- **Routing:** Angular Router
+
+### Backend
+- **Framework:** FastAPI 0.104+
+- **Lenguaje:** Python 3.11
+- **ML/NLP:**
+  - scikit-learn (RandomForest, TfidfVectorizer)
+  - NLTK (tokenización, stopwords)
+  - spaCy (procesamiento avanzado)
+  - pandas, numpy (manipulación de datos)
+- **API Docs:** Swagger/OpenAPI
+- **CORS:** FastAPI CORS Middleware
+- **Servidor:** Uvicorn (ASGI)
+- **Deployment:** Railway / Docker
+
+### DevOps
+- **Containerización:** Docker + Docker Compose
+- **CI/CD:** GitHub Actions (próximamente)
+- **Hosting Backend:** Railway
+- **Hosting Frontend:** Firebase
+- **Version Control:** Git + GitHub
+
+## 📦 Requisitos Previos
+
+### Para el Frontend
+- Node.js 20+ y npm 10+
+- Angular CLI 18+
+- Firebase CLI
+
+### Para el Backend
+- Python 3.11+
+- pip (package manager)
+- Docker (opcional, para containerización)
+
+### Opcional
 - Git
+- Visual Studio Code o tu IDE preferido
 
-### Instalación Local
+## 🚀 Instalación y Configuración
+
+### 1. Clonar el Repositorio
 
 ```bash
-# 1. Clonar repositorio
-git clone https://github.com/tu-usuario/unmsm-sentiment-api.git
-cd unmsm-sentiment-api
+git clone https://github.com/tu-usuario/analysis-sentiment-unmsm.git
+cd analysis-sentiment-unmsm
+```
 
-# 2. Crear entorno virtual
+### 2. Configurar el Backend
+
+```bash
+cd BACKEND
+
+# Crear entorno virtual
 python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# o
-venv\Scripts\activate  # Windows
 
-# 3. Instalar dependencias
+# Activar entorno virtual
+# Windows:
+venv\Scripts\activate
+# Linux/Mac:
+source venv/bin/activate
+
+# Instalar dependencias
 pip install -r requirements.txt
 
-# 4. Verificar dataset
-ls -lh data/dataset_instagram_unmsm.csv
+# Descargar recursos de NLTK (primera vez)
+python -c "import nltk; nltk.download('stopwords'); nltk.download('punkt')"
 
-# 5. Ejecutar servidor
-python run.py
+# Configurar variables de entorno (crear .env)
+cat > .env << EOF
+ENVIRONMENT=development
+PORT=8000
+ALLOWED_ORIGINS=http://localhost:4200
+EOF
+
+# Iniciar servidor de desarrollo
+python main.py
 ```
 
-El servidor estará disponible en:
-- API: http://localhost:8000/api
-- Docs: http://localhost:8000/api/docs
-- ReDoc: http://localhost:8000/api/redoc
+El backend estará disponible en: `http://localhost:8000`
 
-## 📡 Endpoints Principales
+### 3. Configurar el Frontend
 
-### Health Check
 ```bash
+cd ../analysis-sentiment-unmsm
+
+# Instalar dependencias
+npm install
+
+# Configurar Firebase (si es necesario)
+# Edita src/environments/environment.ts con tus credenciales
+
+# Iniciar servidor de desarrollo
+npm start
+```
+
+El frontend estará disponible en: `http://localhost:4200`
+
+## 💻 Uso
+
+### Desarrollo Local
+
+```bash
+# Terminal 1 - Backend
+cd BACKEND
+python main.py
+
+# Terminal 2 - Frontend
+cd analysis-sentiment-unmsm
+npm start
+```
+
+Abre tu navegador en `http://localhost:4200`
+
+### Funcionalidades Principales
+
+1. **Dashboard Principal**
+   - Visualiza métricas generales de sentimientos
+   - Gráficos de distribución y tendencias
+   - Estadísticas en tiempo real
+
+2. **Análisis Detallado**
+   - Filtra por fechas, categorías
+   - Exporta reportes a PDF
+   - Visualiza comentarios individuales
+
+3. **Reportes Ejecutivos**
+   - Genera reportes académicos
+   - Análisis por categorías
+   - Recomendaciones automáticas
+
+## 📚 API Documentation
+
+### Endpoints Principales
+
+#### Health Check
+```http
 GET /health
 ```
+Verifica el estado del servidor.
 
-### Análisis de Sentimientos
-
-#### Comentario Individual
-```bash
-POST /api/analysis/single
-Content-Type: application/json
-
-{
-  "text": "La UNMSM tiene excelentes profesores",
-  "include_details": true
-}
-```
-
-#### Análisis por Lotes
-```bash
-POST /api/analysis/batch
-Content-Type: application/json
-
-{
-  "texts": [
-    "Excelente universidad",
-    "Pésimo servicio",
-    "Ambiente regular"
-  ]
-}
-```
-
-### Estadísticas
-
-#### Estadísticas Generales
-```bash
-GET /api/statistics/
-```
-
-#### Análisis por Temas
-```bash
-GET /api/statistics/topics
-```
-
-#### Datos del Dashboard
-```bash
+#### Dashboard Data
+```http
 GET /api/statistics/dashboard-data
 ```
+Obtiene todas las métricas del dashboard.
 
-### Reportes
-```bash
-POST /api/reports/generate
-Content-Type: application/json
-
+**Respuesta:**
+```json
 {
-  "period": "current",
-  "format": "json"
+  "metrics": {
+    "total_comments": 3312,
+    "sentiment_distribution": {
+      "Positivo": 2246,
+      "Neutral": 549,
+      "Negativo": 517
+    },
+    "sentiment_percentages": {
+      "Positivo": 67.8,
+      "Neutral": 16.6,
+      "Negativo": 15.6
+    }
+  },
+  "model_info": {
+    "accuracy": 0.86,
+    "model_type": "RandomForest"
+  }
 }
 ```
 
-## 📊 Dataset
+#### Análisis de Sentimientos
+```http
+POST /api/analysis/predict
+Content-Type: application/json
 
-El sistema utiliza un dataset de 868 comentarios de Instagram con las siguientes columnas:
-
-- `comentario`: Texto del comentario
-- `sentimiento`: Clasificación (Positivo/Neutral/Negativo)
-
-**Ubicación:** `data/dataset_instagram_unmsm.csv`
-
-## 🤖 Modelo ML
-
-- **Algoritmo:** Logistic Regression + TF-IDF
-- **Accuracy:** ~82%
-- **Features:** 
-  - Score de emojis
-  - Palabras positivas/negativas
-  - Longitud del comentario
-  - Diferencia de sentimientos
-
-## 🏗️ Estructura del Proyecto
-
-```
-BACKEND/
-├── app/
-│   ├── main.py              # Aplicación principal
-│   ├── routes/              # Endpoints
-│   │   ├── analysis_routes.py
-│   │   ├── statistics_routes.py
-│   │   ├── dataset_routes.py
-│   │   └── report_routes.py
-│   ├── services/            # Lógica de negocio
-│   │   └── sentiment_analyzer.py
-│   ├── schemas/             # Modelos Pydantic
-│   │   ├── schemas.py
-│   │   └── analysis.py
-│   ├── core/                # Configuración
-│   │   ├── dependencies.py
-│   │   └── dataset.py
-│   └── utils/               # Utilidades
-│       └── config.py
-├── data/
-│   └── dataset_instagram_unmsm.csv  # Dataset
-├── ml_models/               # Modelos entrenados
-├── requirements.txt         # Dependencias
-├── railway.json             # Config Railway
-├── nixpacks.toml           # Config Nixpacks
-├── Procfile                # Process file
-├── build.sh                # Script de build
-├── start.sh                # Script de inicio
-├── verify-deployment.sh    # Verificación
-└── run.py                  # Ejecutar servidor
+{
+  "text": "Excelente universidad, los profesores son muy buenos"
+}
 ```
 
-## 🚢 Despliegue en Railway
+**Respuesta:**
+```json
+{
+  "sentiment": "Positivo",
+  "confidence": 0.92,
+  "probabilities": {
+    "Positivo": 0.92,
+    "Neutral": 0.05,
+    "Negativo": 0.03
+  }
+}
+```
 
-### Preparación
+### Documentación Completa
+
+Accede a la documentación interactiva en:
+- **Swagger UI:** `http://localhost:8000/api/docs`
+- **ReDoc:** `http://localhost:8000/api/redoc`
+
+## 🚀 Despliegue
+
+### Backend en Railway
+
+1. **Conectar Repositorio**
+   ```bash
+   # Asegúrate de tener el código en GitHub
+   git add .
+   git commit -m "Ready for deployment"
+   git push origin main
+   ```
+
+2. **Configurar Railway**
+   - Ve a [railway.app](https://railway.app)
+   - Conecta tu repositorio de GitHub
+   - Selecciona `BACKEND` como directorio raíz
+   - Configura variables de entorno:
+     ```
+     PORT=8000
+     ENVIRONMENT=production
+     ALLOWED_ORIGINS=https://analysis-sentiment-unmsm.web.app
+     ```
+   - Deploy automático
+
+3. **Obtener URL**
+   - Railway te dará una URL como: `https://tu-proyecto.railway.app`
+
+### Frontend en Firebase
+
+1. **Instalar Firebase CLI**
+   ```bash
+   npm install -g firebase-tools
+   ```
+
+2. **Login y configurar**
+   ```bash
+   firebase login
+   firebase init hosting
+   ```
+
+3. **Actualizar URL del Backend**
+   ```typescript
+   // src/environments/environment.prod.ts
+   export const environment = {
+     production: true,
+     backendUrl: 'https://tu-proyecto.railway.app/api',
+     apiUrl: 'https://tu-proyecto.railway.app/api',
+     mlApiUrl: 'https://tu-proyecto.railway.app',
+     // ...
+   };
+   ```
+
+4. **Build y Deploy**
+   ```bash
+   npm run build -- --configuration production
+   firebase deploy
+   ```
+
+### Usando Docker Compose (Opcional)
 
 ```bash
-# 1. Verificar todo está listo
-chmod +x verify-deployment.sh
-./verify-deployment.sh
+# Build y ejecutar todo el stack
+docker-compose up -d
 
-# 2. Hacer scripts ejecutables
-chmod +x build.sh start.sh
-
-# 3. Commit cambios
-git add .
-git commit -m "Ready for deployment"
-git push
-```
-
-### Desplegar
-
-#### Opción 1: Desde GitHub (Recomendado)
-
-1. Push a GitHub
-2. Conectar con Railway
-3. Railway detecta automáticamente la configuración
-4. ¡Listo!
-
-#### Opción 2: Railway CLI
-
-```bash
-# Instalar CLI
-npm install -g @railway/cli
-
-# Login
-railway login
-
-# Inicializar
-railway init
-
-# Desplegar
-railway up
-```
-
-### Variables de Entorno (Railway)
-
-```
-PORT=8000
-HOST=0.0.0.0
-PYTHONUNBUFFERED=1
-DEBUG=False
-```
-
-### Verificar Despliegue
-
-```bash
-# Health check
-curl https://tu-app.railway.app/health
-
-# Estadísticas
-curl https://tu-app.railway.app/api/statistics/
-
-# Análisis
-curl -X POST https://tu-app.railway.app/api/analysis/single \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Excelente universidad", "include_details": true}'
-```
-
-## 🔧 Configuración Frontend Angular
-
-```typescript
-// src/environments/environment.prod.ts
-export const environment = {
-  production: true,
-  apiUrl: 'https://tu-app.railway.app/api'
-};
-```
-
-## 📚 Documentación API
-
-Una vez desplegado, accede a:
-
-- **Swagger UI:** `https://tu-app.railway.app/api/docs`
-- **ReDoc:** `https://tu-app.railway.app/api/redoc`
-- **OpenAPI JSON:** `https://tu-app.railway.app/openapi.json`
-
-## 🧪 Testing
-
-```bash
-# Instalar dependencias de testing
-pip install pytest pytest-asyncio httpx
-
-# Ejecutar tests
-pytest
-
-# Con cobertura
-pytest --cov=app tests/
-```
-
-## 📈 Monitoreo
-
-```bash
 # Ver logs
-railway logs
+docker-compose logs -f
 
-# Ver logs en tiempo real
-railway logs --tail
-
-# Estado del servicio
-railway status
-
-# Variables
-railway variables
+# Detener
+docker-compose down
 ```
 
-## 🐛 Solución de Problemas
+## 📁 Estructura del Proyecto
 
-### Dataset no encontrado
-```bash
-# Verificar que el dataset existe
-ls -lh data/dataset_instagram_unmsm.csv
-
-# Añadir al repositorio si no está
-git add data/dataset_instagram_unmsm.csv -f
-git commit -m "Add dataset"
-git push
+```
+analysis-sentiment-unmsm/
+├── BACKEND/                          # Backend FastAPI
+│   ├── app/
+│   │   ├── routes/                   # Endpoints de la API
+│   │   ├── services/                 # Lógica de negocio
+│   │   ├── models/                   # Modelos de datos
+│   │   └── utils/                    # Utilidades
+│   ├── ml_models/                    # Modelos de Machine Learning
+│   ├── data/                         # Datasets
+│   ├── main.py                       # Punto de entrada
+│   ├── requirements.txt              # Dependencias Python
+│   └── Dockerfile                    # Docker configuration
+│
+├── analysis-sentiment-unmsm/         # Frontend Angular
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── core/                 # Servicios core
+│   │   │   ├── features/             # Módulos de funcionalidades
+│   │   │   ├── shared/               # Componentes compartidos
+│   │   │   └── models/               # Interfaces TypeScript
+│   │   ├── environments/             # Configuraciones de entorno
+│   │   └── assets/                   # Recursos estáticos
+│   ├── angular.json
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── Datasets/                         # Datos de entrenamiento
+├── docker-compose.yml                # Orquestación de servicios
+├── .gitignore
+└── README.md                         # Este archivo
 ```
 
-### Error de módulos
-```bash
-# Actualizar requirements
-pip freeze > requirements.txt
-git add requirements.txt
-git commit -m "Update requirements"
-git push
-```
+## 🤝 Contribuir
 
-### Error de permisos
-```bash
-chmod +x build.sh start.sh
-git add build.sh start.sh
-git commit -m "Fix permissions"
-git push
-```
-
-### CORS issues
-Verifica en `app/main.py`:
-```python
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-```
-
-## 📝 Licencia
-
-MIT License - Ver [LICENSE](LICENSE) para más detalles.
-
-## 👥 Contribuir
+Las contribuciones son bienvenidas. Por favor:
 
 1. Fork el proyecto
-2. Crea una rama (`git checkout -b feature/AmazingFeature`)
-3. Commit cambios (`git commit -m 'Add AmazingFeature'`)
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
 4. Push a la rama (`git push origin feature/AmazingFeature`)
 5. Abre un Pull Request
 
-## 📧 Contacto
+### Estándares de Código
 
-UNMSM - Facultad de Ingeniería de Sistemas
+- **Frontend:** Sigue las guías de estilo de Angular
+- **Backend:** Sigue PEP 8 para Python
+- **Commits:** Usa Conventional Commits
+
+## 📄 Licencia
+
+Este proyecto es parte de una tesis de grado de la Universidad Nacional Mayor de San Marcos.
+
+## 👥 Autores
+
+**Facultad de Ingeniería de Sistemas e Informática**
+Universidad Nacional Mayor de San Marcos
+
+- **Desarrollador Principal:** [Tu Nombre]
+- **Asesor:** [Nombre del Asesor]
+- **Año:** 2025
+
+## 🙏 Agradecimientos
+
+- Universidad Nacional Mayor de San Marcos
+- Facultad de Ingeniería de Sistemas e Informática
+- Comunidad de código abierto
+
+## 📞 Contacto
+
+- **Email:** sihomara.ochoa@unmsm.edu.pe
+- **Universidad:** [UNMSM](https://www.unmsm.edu.pe)
+- **LinkedIn:** https://www.linkedin.com/in/sihomara-sandy-ochoa-cisneros/
 
 ---
 
-⭐ Si este proyecto te fue útil, dale una estrella en GitHub!
+<div align="center">
+
+**🎓 Hecho con ❤️ en la UNMSM - La universidad del Perú, Decana de América**
+
+[![UNMSM](https://img.shields.io/badge/UNMSM-1551-red?style=for-the-badge)](https://www.unmsm.edu.pe)
+
+</div>
